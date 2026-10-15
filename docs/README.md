@@ -8,7 +8,7 @@ URL : `https://victordiaz1000.github.io/bym-classic/`
 ## Contenu
 
 - `index.html`, `style.css`, `script.js` — la page publique.
-- `assets/screenshots/` — 19 captures (7 téléphone, 12 tablette), intégrées à la galerie.
+- `assets/screenshots/` — 24 captures (12 téléphone, 12 tablette), intégrées à la galerie.
 - `assets/favicon.svg` — icône du site.
 - `CONTENU.md` — fiche descriptive de chaque section (texte de référence).
 - `DEPLOY.md` — guide complet de déploiement.
