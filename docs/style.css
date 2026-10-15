@@ -118,9 +118,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .brand-name {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 500; font-size: 1.06rem; letter-spacing: .02em;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.brand-name-short { display: none; }
 .brand-sub {
   font-size: .66rem; letter-spacing: .2em; text-transform: uppercase;
   color: var(--muted); border-left: 1px solid var(--ring); padding-left: .75rem;
@@ -543,9 +542,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
   .steps-ed li { grid-template-columns: 1fr; gap: .6rem; }
 }
 @media (max-width: 560px) {
-  .brand-name-full { display: none; }
-  .brand-name-short { display: inline; }
-  .brand-name { max-width: none; font-size: .95rem; }
   .stats ul { grid-template-columns: repeat(2, 1fr); }
   .stats li { padding: 1.6rem .6rem; }
   .changelog { padding-left: 30px; }
