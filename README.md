@@ -195,8 +195,16 @@ Voir `docs/DEPLOY.md`.
 
 ## Licence et droits
 
-Code source publié sur GitHub (licence : voir ce dépôt).
+Le code source est publié sous licence **[MIT](LICENSE)** — libre d'usage,
+de modification et de redistribution, à condition de citer l'auteur.
 
 Les textes bibliques conservent les droits de leurs éditeurs : la BYM est
 embarquée avec l'accord de sa source, la Segond 1910 est libre de droit, et
 chaque version sous copyright affiche sa mention sur sa carte dans l'app.
+La licence MIT porte sur le **code**, pas sur ces textes.
+
+## Contact
+
+- Par email : lien « Contact » sur la
+  [page de présentation](https://victordiaz1000.github.io/bym-classic/)
+- Par GitHub : [ouvrir une issue](https://github.com/victordiaz1000/bym-classic/issues)

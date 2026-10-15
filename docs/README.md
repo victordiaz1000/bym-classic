@@ -13,12 +13,9 @@ URL après publication : `https://victordiaz1000.github.io/bym-classic/`
 
 ## Déploiement (GitHub Pages)
 
-Le site vit dans le dossier `docs/` du dépôt `bym-classic`, à côté du code
-source de l'application.
-
-1. Pousse la branche `main` sur GitHub (avec le dossier `docs/`).
+1. Pousse ce dossier dans un dépôt **public** nommé `bym-classic`.
 2. Sur GitHub : **Settings → Pages → Build and deployment → Source : Deploy from a branch**.
-3. Branche : `main` · Dossier : `/docs`.
+3. Branche : `main` · Dossier : `/ (root)`.
 4. Attends 1–2 minutes : l'URL est live.
 
 > Le dépôt **doit être public** pour GitHub Pages gratuit. Ce dossier ne contient
@@ -41,5 +38,13 @@ source de l'application.
 
 ## Licence
 
-Contenu du site : libre selon les besoins du projet. Le code de l'app BYM
-est publié séparément.
+Code du site et de l'application : **MIT** (voir `LICENSE` à la racine du
+dépôt). Les textes bibliques conservent les droits de leurs éditeurs —
+chaque version sous copyright affiche sa mention dans l'application.
+
+## Contact
+
+Le lien « Contact » de la page assemble l'adresse au chargement, dans
+`script.js` (`initContact`) : elle n'est jamais écrite en clair dans le
+HTML. Pour changer l'adresse, modifier `data-user` et `data-domain` sur
+l'élément `#contact-mail` dans `index.html`.

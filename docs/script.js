@@ -15,6 +15,7 @@
     initLightbox();
     initChangelog();
     initYear();
+    initContact();
   });
 
   // ----------------------------------------------------------
@@ -243,5 +244,31 @@
   function initYear() {
     const el = document.getElementById('year');
     if (el) el.textContent = String(new Date().getFullYear());
+  }
+
+  // ----------------------------------------------------------
+  // Contact : l'adresse n'est jamais écrite en clair dans le HTML.
+  // Elle est reconstruite ici, au chargement, à partir de deux
+  // fragments — un robot qui ne lit que le balisage ne la voit pas.
+  // C'est une protection contre les collecteurs basiques, pas un
+  // bouclier : tout ce qui s'affiche dans un navigateur finit par
+  // être lisible.
+  // ----------------------------------------------------------
+  function initContact() {
+    const link = document.getElementById('contact-mail');
+    if (!link) return;
+
+    const user = link.dataset.user || '';
+    const domain = link.dataset.domain || '';
+    if (!user || !domain) return;
+
+    const address = user + '@' + domain;
+    link.href = 'mailto:' + address;
+    link.textContent = '✉ ' + address;
+
+    // Efface la trace des fragments : après coup, le DOM ne porte
+    // plus ni l'attribut ni la valeur assemblée.
+    link.removeAttribute('data-user');
+    link.removeAttribute('data-domain');
   }
 })();
