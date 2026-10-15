@@ -263,8 +263,11 @@
     if (!user || !domain) return;
 
     const address = user + '@' + domain;
+
+    // Le mailto est bien reconstruit… mais le libellé reste « Contact » :
+    // l'adresse n'est jamais affichée à l'écran, donc jamais ramassée
+    // par un œil humain non sollicité ni par un robot de saisie.
     link.href = 'mailto:' + address;
-    link.textContent = '✉ ' + address;
 
     // Efface la trace des fragments : après coup, le DOM ne porte
     // plus ni l'attribut ni la valeur assemblée.

@@ -92,8 +92,8 @@ Note : l'APK est signé avec la clé personnelle de l'auteur ; les mises à jour
 - Titre de section : « Contact »
 - Texte : « Une question, une suggestion, une faute repérée dans le texte ? Écris-moi. »
 - Note dans la carte : l'adresse est assemblée par le navigateur au chargement, pour éviter les robots qui collectent les emails.
-- Bouton : `✉ Écrire à l'auteur` — devient `✉ <l'adresse>` une fois le JS exécuté ; `mailto:` reconstruit à partir de `data-user` + `data-domain` (effacés ensuite du DOM).
-- Adresse : `victordiazayakana10@gmail.com` (jamais en clair dans le HTML).
+- Bouton : libellé fixe **`✉ Contact`** — l'adresse n'est jamais affichée. Le JS se contente de poser le `mailto:`, reconstruit à partir de `data-user` + `data-domain` (effacés ensuite du DOM).
+- Adresse : `victordiazayakana10@gmail.com` (jamais en clair dans le HTML, jamais montrée à l'écran).
 - Alternative : « Ou passe par GitHub : ouvrir une issue » → `issues` du dépôt.
 
 ## Pied de page
