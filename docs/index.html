@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="BYM Classic — Bible de Yehoshoua Ha Mashiah. Application Android (APK) : lecture en plusieurs traductions, lexique Strong intégré (14 195 entrées), interlinéaires hébreu/grec, onglets, notes, 14 thèmes. 100 % hors ligne." />
-  <meta name="theme-color" content="#1a130e" />
+  <meta name="theme-color" content="#15110c" />
   <title>BYM Classic — Bible de Yehoshoua Ha Mashiah</title>
 
   <!-- Aperçu lors du partage (liens, messageries…) -->
@@ -20,7 +20,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="assets/icon-64.png" />
 
@@ -42,188 +42,149 @@
 </head>
 <body>
   <a class="skip-link" href="#main">Aller au contenu</a>
+  <div id="progress" aria-hidden="true"></div>
+
+  <!-- ========================= NAVIGATION ========================= -->
+  <nav class="nav" aria-label="Navigation principale">
+    <a class="brand" href="#top">
+      <img class="brand-logo" src="assets/icon.png" alt="BYM" />
+      <span class="brand-name brand-name-full">Bible de Yehoshoua Ha Mashiah Classic</span>
+      <span class="brand-name brand-name-short" aria-hidden="true">Bym classic</span>
+      <span class="brand-sub">Bible de Yehoshoua Ha Mashiah</span>
+    </a>
+
+    <div class="nav-links" id="nav-menu">
+      <a href="#features">Fonctionnalités</a>
+      <a href="#screenshots">Aperçus</a>
+      <a href="#install">Installation</a>
+      <a href="#changelog">Versions</a>
+      <a href="#contact">Contact</a>
+      <a class="nav-cta" href="#download">Télécharger</a>
+    </div>
+
+    <div class="nav-side">
+      <button id="theme-toggle" class="icon-btn" type="button" aria-label="Basculer le thème clair ou sombre" title="Thème clair / sombre">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+      <button id="nav-burger" class="icon-btn burger" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Ouvrir le menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </nav>
 
   <!-- ========================= HERO ========================= -->
   <header class="hero" id="top">
-    <nav class="nav" aria-label="Navigation principale">
-      <div class="brand">
-        <img class="brand-logo" src="assets/icon.png" alt="BYM" />
-        <span class="brand-name brand-name-full">Bible de Yehoshoua Ha Mashiah Classic</span>
-        <span class="brand-name brand-name-short" aria-hidden="true">Bym classic</span>
+    <div class="hero-text" id="main">
+      <span class="overline">Android · APK · hors Play Store</span>
+      <h1>Lis la Bible en plusieurs traductions,<br />avec le <em>lexique Strong</em> intégré.</h1>
+      <p class="lead">
+        Lis le texte intégral de la <strong>BYM</strong> et étudie les mots
+        dans les langues bibliques grâce au <strong>lexique Strong</strong>
+        intégré à l'application — même sans connexion. Onglets, notes,
+        surlignages, comparateur de versions et 14 thèmes pour un confort de
+        lecture au quotidien.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" id="download" href="https://github.com/victordiaz1000/bym-classic/releases/download/v1.0.0/bym-1.0.0.apk" download>
+          ⬇ Télécharger l'APK (v1.0.0)
+        </a>
+        <a class="btn btn-ghost" href="#screenshots">Voir les aperçus</a>
       </div>
-
-      <div class="nav-side">
-        <button id="theme-toggle" class="icon-btn" type="button" aria-label="Basculer le thème clair ou sombre" title="Thème clair / sombre">
-          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
-        </button>
-        <button id="nav-burger" class="icon-btn burger" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Ouvrir le menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        </button>
-      </div>
-
-      <div class="nav-links" id="nav-menu">
-        <a href="#features">Fonctionnalités</a>
-        <a href="#screenshots">Aperçus</a>
-        <a href="#install">Installation</a>
-        <a href="#changelog">Versions</a>
-        <a href="#contact">Contact</a>
-        <a class="nav-cta" href="#download">Télécharger</a>
-      </div>
-    </nav>
-
-    <div class="hero-inner" id="main">
-      <div class="hero-text">
-        <span class="badge">Android · APK · Hors Play Store</span>
-        <h1>Lis la Bible en plusieurs traductions,<br/>avec le <span class="accent-text">lexique Strong</span> intégré.</h1>
-        <p class="lead">
-          Lis le texte intégral de la <strong>BYM</strong> et étudie les mots
-          dans les langues bibliques grâce au <strong>lexique Strong</strong>
-          intégré à l'application — même sans connexion. Onglets, notes,
-          surlignages, comparateur de versions et 14 thèmes pour un confort de
-          lecture au quotidien.
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" id="download" href="https://github.com/victordiaz1000/bym-classic/releases/download/v1.0.0/bym-1.0.0.apk" download>
-            ⬇ Télécharger l'APK (v1.0.0)
-          </a>
-          <a class="btn btn-ghost" href="#screenshots">Voir les aperçus</a>
-        </div>
-        <p class="hero-note">
-          Gratuit · Sans publicité · Sans compte · Open source · 100 % hors ligne
-        </p>
-      </div>
-
-      <!-- Une seule capture en hero -->
-      <div class="hero-shot-wrap">
-        <figure class="hero-shot">
-          <img src="assets/screenshots/phone-black-accueil.png" alt="Accueil BYM — thème noir" loading="eager" />
-          <figcaption>Accueil — thème noir</figcaption>
-        </figure>
-        <div class="hero-shot-glow" aria-hidden="true"></div>
-      </div>
+      <p class="hero-note">
+        Gratuit <span>·</span> Sans publicité <span>·</span> Sans compte <span>·</span> Open source <span>·</span> 100 % hors ligne
+      </p>
     </div>
+
+    <figure class="shot rv">
+      <img src="assets/screenshots/phone-black-accueil.png" alt="Accueil BYM — thème noir" loading="eager" />
+      <figcaption>Accueil — thème noir</figcaption>
+    </figure>
   </header>
 
   <!-- ========================= STATS ========================= -->
   <section class="stats" aria-label="Chiffres clés">
     <ul>
-      <li><strong>66</strong><span>livres, texte intégral</span></li>
-      <li><strong>31 169</strong><span>versets BYM</span></li>
-      <li><strong>5 753</strong><span>notes BYM</span></li>
-      <li><strong>14 195</strong><span>entrées Strong</span></li>
-      <li><strong>14</strong><span>thèmes de lecture</span></li>
-      <li><strong>15+</strong><span>traductions</span></li>
+      <li class="rv"><strong>66</strong><span>livres, texte intégral</span></li>
+      <li class="rv"><strong>31 169</strong><span>versets BYM</span></li>
+      <li class="rv"><strong>5 753</strong><span>notes BYM</span></li>
+      <li class="rv"><strong>14 195</strong><span>entrées Strong</span></li>
+      <li class="rv"><strong>14</strong><span>thèmes de lecture</span></li>
+      <li class="rv"><strong>15+</strong><span>traductions</span></li>
     </ul>
   </section>
 
   <!-- ========================= FEATURES ========================= -->
-  <section id="features" class="section">
-    <div class="section-head">
+  <section class="section" id="features">
+    <div class="sec-head rv">
+      <span class="sec-num">01</span>
       <h2>Ce que fait BYM Classic</h2>
       <p>Lecture et étude biblique, pensées pour le hors-ligne et le confort.</p>
     </div>
-    <div class="grid">
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
-        <h3>Lecture en plusieurs onglets</h3>
-        <p>Ouvre autant de passages que tu veux, comme dans un navigateur : onglets de lecture, page « nouvel onglet » et onglets d'ouvrages, avec groupes colorés et restauration de la position.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/><path d="m9 18 6-6-6-6"/></svg></div>
-        <h3>Navigation par chapitre</h3>
-        <p>Passe au chapitre précédent ou suivant en glissant le doigt sur le texte (swipe), ou d'un tap sur les chevrons ‹ › de la barre d'actions — dans un sens comme dans l'autre.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
-        <h3>Plusieurs traductions</h3>
-        <p>BYM, LSGS, LSG 1910 avec Strong, Ostervald, Chouraqui, néo-crampon, SEF… consultables et comparables dans le même lecteur.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></div>
-        <h3>Lexique Strong</h3>
-        <p>14 195 entrées hébreu / grec : lemmes, translittération, prononciation, catégories et définitions complètes en français.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg></div>
-        <h3>Lecture mot à mot</h3>
-        <p>Tapez un mot d'un verset pour ouvrir sa fiche Strong complète, puis naviguez mot précédent / mot suivant sans quitter la lecture.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></div>
-        <h3>Interlinéaire complet</h3>
-        <p>Source ATI (hébreu) et NTI (grec) : glose, grammaire, numéro Strong et renvois cross-référencés, avec couleurs distinctes pour suivre chaque couche.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div>
-        <h3>Recherche avancée</h3>
-        <p>Recherche unifiée : passages, notes, études, Strong, dictionnaire — avec reconnaissance des références (« Jean 3:16 ») et classement exact &gt; préfixe &gt; sous-chaîne.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3v6h6"/><path d="M15.5 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3Z"/></svg></div>
-        <h3>Notes, favoris et surlignage</h3>
-        <p>Sélection multiple de versets, 16 couleurs de surlignage, notes multiples par verset avec export, favoris et historique — tout est stocké localement.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1 1 2.53 1.02 4.03 1 1.67-.02 3.03-1.38 3.03-3.03 0-.5-.2-1-.5-1.35"/></svg></div>
-        <h3>Thèmes et polices</h3>
-        <p>14 thèmes (parchemin, bois, azur, nuit, veillée…) + photo personnelle en fond, et douze familles de caractères (Lora, Literata, Cardo pour l'hébreu et le grec…).</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="2" x2="22" y1="2" y2="22"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.859a10 10 0 0 1 5.17-2.69"/><path d="M19 12.859a10 10 0 0 0-2.756-2.068"/><path d="M10 9a6 6 0 0 1 4 0"/><path d="M2 8.82a15 15 0 0 1 4.177-2.643"/><path d="M22 8.82a15 15 0 0 0-11.288-3.764"/><path d="M12 20h.01"/></svg></div>
-        <h3>100 % hors ligne</h3>
-        <p>Les textes bibliques et le lexique Strong sont embarqués ; lecture, étude et recherche fonctionnent sans connexion.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></svg></div>
-        <h3>Téléphone et tablette</h3>
-        <p>Interface adaptée aux petits et aux grands écrans, portrait comme paysage, avec barre de navigation adaptative et mode immersion.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg></div>
-        <h3>Ouvrages, livres et dictionnaires</h3>
-        <p>Bibliothèque téléchargeable à la demande : livres et ouvrages d'édification (Le Ministère, L'Animalité, Le Châtiment, L'Ombre, La Croix, Le Nom du Père, Les Voleurs), dictionnaire Westphal 1932, glossaire Martin — lus directement dans l'application.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg></div>
-        <h3>Mises à jour du texte</h3>
-        <p>Les corrections du texte BYM se vérifient et se téléchargent depuis la source (empreintes git vérifiées) — sans réinstaller l'application.</p>
-      </article>
-      <article class="card">
-        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
-        <h3>Comparer et lire en parallèle</h3>
-        <p>Le même verset dans toutes les versions installées, ou deux traductions côte à côte alignées verset par verset en lecture parallèle.</p>
-      </article>
+
+    <div class="index">
+      <article class="entry rv"><span class="n">01</span><div><h3>Lecture en plusieurs onglets</h3><p>Ouvre autant de passages que tu veux, comme dans un navigateur : onglets de lecture, page « nouvel onglet » et onglets d'ouvrages, avec groupes colorés et restauration de la position.</p></div></article>
+      <article class="entry rv"><span class="n">02</span><div><h3>Navigation par chapitre</h3><p>Passe au chapitre précédent ou suivant en glissant le doigt sur le texte (swipe), ou d'un tap sur les chevrons ‹ › de la barre d'actions — dans un sens comme dans l'autre.</p></div></article>
+      <article class="entry rv"><span class="n">03</span><div><h3>Plusieurs traductions</h3><p>BYM, LSGS, LSG 1910 avec Strong, Ostervald, Chouraqui, néo-crampon, SEF… consultables et comparables dans le même lecteur.</p></div></article>
+      <article class="entry rv"><span class="n">04</span><div><h3>Lexique Strong</h3><p>14 195 entrées hébreu / grec : lemmes, translittération, prononciation, catégories et définitions complètes en français.</p></div></article>
+      <article class="entry rv"><span class="n">05</span><div><h3>Lecture mot à mot</h3><p>Tapez un mot d'un verset pour ouvrir sa fiche Strong complète, puis naviguez mot précédent / mot suivant sans quitter la lecture.</p></div></article>
+      <article class="entry rv"><span class="n">06</span><div><h3>Interlinéaire complet</h3><p>Source ATI (hébreu) et NTI (grec) : glose, grammaire, numéro Strong et renvois cross-référencés, avec couleurs distinctes pour suivre chaque couche.</p></div></article>
+      <article class="entry rv"><span class="n">07</span><div><h3>Recherche avancée</h3><p>Recherche unifiée : passages, notes, études, Strong, dictionnaire — avec reconnaissance des références (« Jean 3:16 ») et classement exact &gt; préfixe &gt; sous-chaîne.</p></div></article>
+      <article class="entry rv"><span class="n">08</span><div><h3>Notes, favoris et surlignage</h3><p>Sélection multiple de versets, 16 couleurs de surlignage, notes multiples par verset avec export, favoris et historique — tout est stocké localement.</p></div></article>
+      <article class="entry rv"><span class="n">09</span><div><h3>Thèmes et polices</h3><p>14 thèmes (parchemin, bois, azur, nuit, veillée…) + photo personnelle en fond, et douze familles de caractères (Lora, Literata, Cardo pour l'hébreu et le grec…).</p></div></article>
+      <article class="entry rv"><span class="n">10</span><div><h3>100 % hors ligne</h3><p>Les textes bibliques et le lexique Strong sont embarqués ; lecture, étude et recherche fonctionnent sans connexion.</p></div></article>
+      <article class="entry rv"><span class="n">11</span><div><h3>Téléphone et tablette</h3><p>Interface adaptée aux petits et aux grands écrans, portrait comme paysage, avec barre de navigation adaptative et mode immersion.</p></div></article>
+      <article class="entry rv"><span class="n">12</span><div><h3>Ouvrages, livres et dictionnaires</h3><p>Bibliothèque téléchargeable à la demande : livres et ouvrages d'édification (Le Ministère, L'Animalité, Le Châtiment, L'Ombre, La Croix, Le Nom du Père, Les Voleurs), dictionnaire Westphal 1932, glossaire Martin — lus directement dans l'application.</p></div></article>
+      <article class="entry rv"><span class="n">13</span><div><h3>Mises à jour du texte</h3><p>Les corrections du texte BYM se vérifient et se téléchargent depuis la source (empreintes git vérifiées) — sans réinstaller l'application.</p></div></article>
+      <article class="entry rv"><span class="n">14</span><div><h3>Comparer et lire en parallèle</h3><p>Le même verset dans toutes les versions installées, ou deux traductions côte à côte alignées verset par verset en lecture parallèle.</p></div></article>
     </div>
   </section>
 
   <!-- ========================= SCREENSHOTS ========================= -->
-  <section id="screenshots" class="section alt">
-    <div class="section-head">
+  <section class="section" id="screenshots">
+    <div class="sec-head rv">
+      <span class="sec-num">02</span>
       <h2>Aperçus</h2>
-      <p>Toutes les captures — clique pour agrandir.</p>
+      <p>26 captures — 14 téléphone, 12 tablette. Clique pour agrandir.</p>
     </div>
 
-    <h3 class="gallery-title">Téléphone</h3>
-    <div class="phone-gallery">
-      <a href="assets/screenshots/phone-black-accueil.png" data-lightbox="phone" aria-label="Agrandir : Accueil thème noir"><img src="assets/screenshots/phone-black-accueil.png" alt="Accueil thème noir" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-beige-lecture.png" data-lightbox="phone" aria-label="Agrandir : Lecture thème beige"><img src="assets/screenshots/phone-beige-lecture.png" alt="Lecture thème beige" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-black-lecture.png" data-lightbox="phone" aria-label="Agrandir : Lecture thème noir"><img src="assets/screenshots/phone-black-lecture.png" alt="Lecture thème noir" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-black-lexique.png" data-lightbox="phone" aria-label="Agrandir : Lexique Strong"><img src="assets/screenshots/phone-black-lexique.png" alt="Lexique Strong" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-black-note.png" data-lightbox="phone" aria-label="Agrandir : Notes"><img src="assets/screenshots/phone-black-note.png" alt="Notes" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-bois-lecture.png" data-lightbox="phone" aria-label="Agrandir : Lecture thème bois"><img src="assets/screenshots/phone-bois-lecture.png" alt="Lecture thème bois" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-b-livre.png" data-lightbox="phone" aria-label="Agrandir : Onglet livres thème bleu"><img src="assets/screenshots/phone-b-livre.png" alt="Onglet livres thème bleu" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-bois-accueil.png" data-lightbox="phone" aria-label="Agrandir : Accueil thème bois"><img src="assets/screenshots/phone-bois-accueil.png" alt="Accueil thème bois" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-cacao-interligne-nt.png" data-lightbox="phone" aria-label="Agrandir : Interlinéaire grec NTI — Marc 2"><img src="assets/screenshots/phone-cacao-interligne-nt.png" alt="Interlinéaire grec NTI — Marc 2" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-cacao-interligne-heb.png" data-lightbox="phone" aria-label="Agrandir : Interlinéaire hébreu ATI — Exode 2"><img src="assets/screenshots/phone-cacao-interligne-heb.png" alt="Interlinéaire hébreu ATI — Exode 2" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-cacao-interligne.png" data-lightbox="phone" aria-label="Agrandir : Grec mot à mot SES — Deutéronome 4"><img src="assets/screenshots/phone-cacao-interligne.png" alt="Grec mot à mot SES — Deutéronome 4" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-cacao-septante.png" data-lightbox="phone" aria-label="Agrandir : Septante SEF, grec et français — Deutéronome 4"><img src="assets/screenshots/phone-cacao-septante.png" alt="Septante SEF, grec et français — Deutéronome 4" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-basrelief-lexique.png" data-lightbox="phone" aria-label="Agrandir : Fiche Strong au clic dans le verset — Marc 2:8"><img src="assets/screenshots/phone-basrelief-lexique.png" alt="Fiche Strong au clic dans le verset — Marc 2:8, kardia (G2588)" loading="lazy" /></a>
-      <a href="assets/screenshots/phone-basrelief-dico.png" data-lightbox="phone" aria-label="Agrandir : Dictionnaire Westphal 1932 — article ESPRIT"><img src="assets/screenshots/phone-basrelief-dico.png" alt="Dictionnaire Westphal 1932 — article ESPRIT" loading="lazy" /></a>
+    <div class="feature-shot rv">
+      <a class="shot-link" href="assets/screenshots/tablet-lecture-parallele-noir.png" data-lightbox="tablet" aria-label="Agrandir : lecture parallèle BYM / LSGS">
+        <img src="assets/screenshots/tablet-lecture-parallele-noir.png" alt="Lecture parallèle BYM / LSGS — thème noir" loading="lazy" />
+      </a>
+      <div class="cap">
+        <span class="kicker">Lecture parallèle</span>
+        <h4>Deux traductions côte à côte, alignées verset par verset.</h4>
+        <p>Le même passage dans toutes les versions installées, ou deux textes face à face pour comparer — sur téléphone comme sur tablette.</p>
+      </div>
     </div>
 
-    <h3 class="gallery-title">Tablette</h3>
-    <div class="tablet-gallery">
+    <div class="strip-head rv">
+      <h4>Téléphone · 14 captures</h4>
+      <span class="hint">glisse →</span>
+    </div>
+    <div class="strip rv">
+      <figure><a href="assets/screenshots/phone-black-accueil.png" data-lightbox="phone" aria-label="Agrandir : Accueil thème noir"><img src="assets/screenshots/phone-black-accueil.png" alt="Accueil thème noir" loading="lazy" /></a><figcaption>Accueil · thème noir</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-beige-lecture.png" data-lightbox="phone" aria-label="Agrandir : Lecture thème beige"><img src="assets/screenshots/phone-beige-lecture.png" alt="Lecture thème beige" loading="lazy" /></a><figcaption>Lecture · thème beige</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-black-lecture.png" data-lightbox="phone" aria-label="Agrandir : Lecture thème noir"><img src="assets/screenshots/phone-black-lecture.png" alt="Lecture thème noir" loading="lazy" /></a><figcaption>Lecture · thème noir</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-black-lexique.png" data-lightbox="phone" aria-label="Agrandir : Lexique Strong"><img src="assets/screenshots/phone-black-lexique.png" alt="Lexique Strong" loading="lazy" /></a><figcaption>Lexique Strong</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-black-note.png" data-lightbox="phone" aria-label="Agrandir : Notes"><img src="assets/screenshots/phone-black-note.png" alt="Notes" loading="lazy" /></a><figcaption>Notes</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-bois-lecture.png" data-lightbox="phone" aria-label="Agrandir : Lecture thème bois"><img src="assets/screenshots/phone-bois-lecture.png" alt="Lecture thème bois" loading="lazy" /></a><figcaption>Lecture · thème bois</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-b-livre.png" data-lightbox="phone" aria-label="Agrandir : Onglet livres thème bleu"><img src="assets/screenshots/phone-b-livre.png" alt="Onglet livres thème bleu" loading="lazy" /></a><figcaption>Onglets · thème bleu</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-bois-accueil.png" data-lightbox="phone" aria-label="Agrandir : Accueil thème bois"><img src="assets/screenshots/phone-bois-accueil.png" alt="Accueil thème bois" loading="lazy" /></a><figcaption>Accueil · thème bois</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-cacao-interligne-nt.png" data-lightbox="phone" aria-label="Agrandir : Interlinéaire grec NTI — Marc 2"><img src="assets/screenshots/phone-cacao-interligne-nt.png" alt="Interlinéaire grec NTI — Marc 2" loading="lazy" /></a><figcaption>Interlinéaire NTI · Marc 2</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-cacao-interligne-heb.png" data-lightbox="phone" aria-label="Agrandir : Interlinéaire hébreu ATI — Exode 2"><img src="assets/screenshots/phone-cacao-interligne-heb.png" alt="Interlinéaire hébreu ATI — Exode 2" loading="lazy" /></a><figcaption>Interlinéaire ATI · Exode 2</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-cacao-interligne.png" data-lightbox="phone" aria-label="Agrandir : Grec mot à mot SES — Deutéronome 4"><img src="assets/screenshots/phone-cacao-interligne.png" alt="Grec mot à mot SES — Deutéronome 4" loading="lazy" /></a><figcaption>Grec mot à mot · Deut. 4</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-cacao-septante.png" data-lightbox="phone" aria-label="Agrandir : Septante SEF, grec et français — Deutéronome 4"><img src="assets/screenshots/phone-cacao-septante.png" alt="Septante SEF, grec et français — Deutéronome 4" loading="lazy" /></a><figcaption>Septante SEF · Deut. 4</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-basrelief-lexique.png" data-lightbox="phone" aria-label="Agrandir : Fiche Strong au clic dans le verset — Marc 2:8"><img src="assets/screenshots/phone-basrelief-lexique.png" alt="Fiche Strong au clic dans le verset — Marc 2:8, kardia (G2588)" loading="lazy" /></a><figcaption>Fiche Strong · Marc 2:8</figcaption></figure>
+      <figure><a href="assets/screenshots/phone-basrelief-dico.png" data-lightbox="phone" aria-label="Agrandir : Dictionnaire Westphal 1932 — article ESPRIT"><img src="assets/screenshots/phone-basrelief-dico.png" alt="Dictionnaire Westphal 1932 — article ESPRIT" loading="lazy" /></a><figcaption>Westphal 1932 · ESPRIT</figcaption></figure>
+    </div>
+
+    <div class="strip-head rv">
+      <h4>Tablette · 12 captures</h4>
+      <span class="hint">clique pour agrandir</span>
+    </div>
+    <div class="grid-shot rv">
       <a href="assets/screenshots/tablet-beige-lecture.png" data-lightbox="tablet" aria-label="Agrandir : Tablette lecture beige"><img src="assets/screenshots/tablet-beige-lecture.png" alt="Tablette lecture beige" loading="lazy" /></a>
       <a href="assets/screenshots/tablet-beige-lecture-2.png" data-lightbox="tablet" aria-label="Agrandir : Tablette lecture beige variante"><img src="assets/screenshots/tablet-beige-lecture-2.png" alt="Tablette lecture beige variante" loading="lazy" /></a>
       <a href="assets/screenshots/tablet-beige-lecture-interligne.png" data-lightbox="tablet" aria-label="Agrandir : Tablette lecture interligne"><img src="assets/screenshots/tablet-beige-lecture-interligne.png" alt="Tablette lecture beige interligne" loading="lazy" /></a>
@@ -240,32 +201,34 @@
   </section>
 
   <!-- ========================= INSTALL ========================= -->
-  <section id="install" class="section">
-    <div class="section-head">
+  <section class="section" id="install">
+    <div class="sec-head rv">
+      <span class="sec-num">03</span>
       <h2>Installer l'APK hors Play Store</h2>
       <p>Android bloque par défaut l'installation de sources inconnues — voici les étapes.</p>
     </div>
-    <ol class="steps">
-      <li><strong>Téléchargez</strong> le fichier APK via le bouton ci-dessus (ou dans « Versions »).</li>
-      <li>Quand Chrome vous prévient « fichier potentiellement dangereux », choisissez
-          <em>« Télécharger quand même »</em> (l'APK vient de GitHub Releases).</li>
-      <li>Ouvrez le fichier téléchargé. Android vous demande d'autoriser l'installation
-          depuis votre navigateur : activez <em>« Autoriser cette source »</em>.</li>
-      <li>Validez l'installation. BYM apparaît dans vos applications.</li>
+
+    <ol class="steps-ed">
+      <li class="rv"><span class="num">I</span><p><strong>Téléchargez</strong> le fichier APK via le bouton ci-dessus (ou dans « Versions »).</p></li>
+      <li class="rv"><span class="num">II</span><p>Quand Chrome vous prévient « fichier potentiellement dangereux », choisissez <em>« Télécharger quand même »</em> (l'APK vient de GitHub Releases).</p></li>
+      <li class="rv"><span class="num">III</span><p>Ouvrez le fichier téléchargé. Android vous demande d'autoriser l'installation depuis votre navigateur : activez <em>« Autoriser cette source »</em>.</p></li>
+      <li class="rv"><span class="num">IV</span><p>Validez l'installation. BYM apparaît dans vos applications.</p></li>
     </ol>
-    <p class="steps-note">
+    <p class="steps-note rv">
       L'APK est signé avec la clé personnelle de l'auteur ; les mises à jour écrasent
       l'ancienne version sans perte de données.
     </p>
   </section>
 
   <!-- ========================= CHANGELOG ========================= -->
-  <section id="changelog" class="section alt">
-    <div class="section-head">
+  <section class="section" id="changelog">
+    <div class="sec-head rv">
+      <span class="sec-num">04</span>
       <h2>Versions de l'application</h2>
       <p>Dernières publications disponibles en téléchargement.</p>
     </div>
-    <div class="changelog" id="changelog-list">
+
+    <div class="changelog rv" id="changelog-list">
       <div class="release">
         <div class="release-head">
           <span class="release-tag">v1.0.0</span>
@@ -288,15 +251,21 @@
   </section>
 
   <!-- ========================= CONTACT ========================= -->
-  <section id="contact" class="section">
-    <div class="section-head">
+  <section class="section" id="contact">
+    <div class="sec-head rv">
+      <span class="sec-num">05</span>
       <h2>Contact</h2>
       <p>Une question, une suggestion, une faute repérée dans le texte ? Écris-moi.</p>
     </div>
-    <div class="contact-card">
-      <p class="contact-text">
+
+    <div class="contact-card rv">
+      <p class="contact-title">
         L'adresse est assemblée par le navigateur au chargement, pour éviter
         les robots qui collectent les emails.
+      </p>
+      <p class="contact-text">
+        Ta lecture, tes notes et tes surlignages restent sur ton appareil :
+        rien n'est envoyé nulle part.
       </p>
       <a class="btn btn-primary" id="contact-mail" href="#contact"
          data-user="victordiazayakana10" data-domain="gmail.com">
@@ -312,17 +281,34 @@
 
   <!-- ========================= FOOTER ========================= -->
   <footer class="footer">
-    <div>
-      <strong>BYM Classic</strong> — Bible de Yehoshoua Ha Mashiah<br/>
-      Application Android · Distribuée hors Play Store.
+    <div class="footer-in">
+      <div>
+        <strong>BYM Classic</strong>
+        <p>Bible de Yehoshoua Ha Mashiah.<br />Application Android · Distribuée hors Play Store.</p>
+      </div>
+      <div>
+        <h5>Navigation</h5>
+        <ul>
+          <li><a href="#features">Fonctionnalités</a></li>
+          <li><a href="#screenshots">Aperçus</a></li>
+          <li><a href="#install">Installation</a></li>
+          <li><a href="#changelog">Versions</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Ressources</h5>
+        <ul>
+          <li><a href="https://github.com/victordiaz1000/bym-classic" target="_blank" rel="noopener">Code source</a></li>
+          <li><a href="https://github.com/victordiaz1000/bym-classic/releases" target="_blank" rel="noopener">Toutes les versions</a></li>
+          <li><a href="https://github.com/victordiaz1000/bym-classic/blob/main/LICENSE" target="_blank" rel="noopener">Licence MIT</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
     </div>
-    <div class="footer-links">
-      <a href="https://github.com/victordiaz1000/bym-classic" target="_blank" rel="noopener">Code source</a>
-      <a href="https://github.com/victordiaz1000/bym-classic/releases" target="_blank" rel="noopener">Toutes les versions</a>
-      <a href="#contact">Contact</a>
-      <a href="#top">↑ Haut de page</a>
+    <div class="footer-copy">
+      <span>© <span id="year">2026</span> · Licence MIT · code source open source</span>
+      <span><a href="#top">↑ Haut de page</a></span>
     </div>
-    <p class="footer-copy">© <span id="year">2026</span> · Licence MIT · <a href="https://github.com/victordiaz1000/bym-classic/blob/main/LICENSE" target="_blank" rel="noopener">Code source open source</a>.</p>
   </footer>
 
   <!-- ========================= LIGHTBOX ========================= -->

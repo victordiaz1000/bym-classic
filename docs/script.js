@@ -12,11 +12,59 @@
     initSmoothScroll();
     initBurger();
     initScrollspy();
+    initChrome();
+    initReveal();
     initLightbox();
     initChangelog();
     initYear();
     initContact();
   });
+
+  // ----------------------------------------------------------
+  // Chrome de la page : nav translucide au défilement +
+  // barre de progression dorée en haut
+  // ----------------------------------------------------------
+  function initChrome() {
+    const nav = document.querySelector('.nav');
+    const bar = document.getElementById('progress');
+    if (!nav && !bar) return;
+
+    const onScroll = () => {
+      const y = window.scrollY || 0;
+      nav?.classList.toggle('scrolled', y > 12);
+      if (bar) {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  // ----------------------------------------------------------
+  // Révélation des blocs au défilement (masquée d'office pour
+  // les utilisateurs qui ont demandé moins de mouvement)
+  // ----------------------------------------------------------
+  function initReveal() {
+    const els = [...document.querySelectorAll('.rv')];
+    if (!els.length) return;
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) {
+      els.forEach((el) => el.classList.add('in'));
+      return;
+    }
+
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in');
+        obs.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+    els.forEach((el) => obs.observe(el));
+  }
 
   // ----------------------------------------------------------
   // Thème du site (clair / sombre), persisté
@@ -38,7 +86,7 @@
 
     function setTheme(theme) {
       root.dataset.theme = theme;
-      if (meta) meta.setAttribute('content', theme === 'light' ? '#f7f1e5' : '#1a130e');
+      if (meta) meta.setAttribute('content', theme === 'light' ? '#faf6ed' : '#15110c');
       btn?.setAttribute('aria-label',
         theme === 'light' ? 'Passer en thème sombre' : 'Passer en thème clair');
     }
