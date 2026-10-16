@@ -8,16 +8,15 @@
   'use strict';
 
   document.addEventListener('DOMContentLoaded', () => {
-    initSiteTheme();
-    initSmoothScroll();
-    initBurger();
-    initScrollspy();
-    initChrome();
-    initReveal();
-    initLightbox();
-    initChangelog();
-    initYear();
-    initContact();
+    // Chaque module est isolé : une erreur dans l'un ne bloque pas les autres
+    // (sinon un bloc « .rv » resterait invisible).
+    [
+      initSiteTheme, initSmoothScroll, initBurger, initScrollspy,
+      initChrome, initReveal, initLightbox, initChangelog,
+      initYear, initContact,
+    ].forEach((fn) => {
+      try { fn(); } catch (e) { console.error('[BYM]', fn.name, e); }
+    });
   });
 
   // ----------------------------------------------------------
