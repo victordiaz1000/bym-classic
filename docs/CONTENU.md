@@ -55,22 +55,22 @@ Ce fichier résume **tout le texte** affiché sur `index.html`, pour pouvoir le 
   - Titre : « Deux traductions côte à côte, alignées verset par verset. »
   - Texte : Le même passage dans toutes les versions installées, ou deux textes face à face pour comparer — sur téléphone comme sur tablette.
 
-### Téléphone (pellicule horizontale — en-tête « Téléphone · 14 captures », indice « glisse → »)
+### Téléphone (pellicule horizontale — en-tête « Téléphone · 14 captures », indice « glisse → » · classée du plus récent au plus ancien)
 
-- phone-black-accueil.png — alt : Accueil thème noir · légende : Accueil · thème noir
+- phone-basrelief-dico.png — alt : Dictionnaire Westphal 1932 — article ESPRIT · légende : Westphal 1932 · ESPRIT
+- phone-basrelief-lexique.png — alt : Fiche Strong au clic dans le verset — Marc 2:8, kardia (G2588) · légende : Fiche Strong · Marc 2:8
+- phone-cacao-interligne-nt.png — alt : Interlinéaire grec NTI — Marc 2 · légende : Interlinéaire NTI · Marc 2
+- phone-cacao-septante.png — alt : Septante SEF, grec et français — Deutéronome 4 · légende : Septante SEF · Deut. 4
+- phone-cacao-interligne.png — alt : Grec mot à mot SES — Deutéronome 4 · légende : Grec mot à mot · Deut. 4
+- phone-cacao-interligne-heb.png — alt : Interlinéaire hébreu ATI — Exode 2 · légende : Interlinéaire ATI · Exode 2
+- phone-bois-accueil.png — alt : Accueil thème bois · légende : Accueil · thème bois
+- phone-black-note.png — alt : Notes · légende : Notes
+- phone-black-lexique.png — alt : Lexique Strong · légende : Lexique Strong
+- phone-b-livre.png — alt : Onglet livres thème bleu · légende : Onglets · thème bleu
 - phone-beige-lecture.png — alt : Lecture thème beige · légende : Lecture · thème beige
 - phone-black-lecture.png — alt : Lecture thème noir · légende : Lecture · thème noir
-- phone-black-lexique.png — alt : Lexique Strong · légende : Lexique Strong
-- phone-black-note.png — alt : Notes · légende : Notes
+- phone-black-accueil.png — alt : Accueil thème noir · légende : Accueil · thème noir
 - phone-bois-lecture.png — alt : Lecture thème bois · légende : Lecture · thème bois
-- phone-b-livre.png — alt : Onglet livres thème bleu · légende : Onglets · thème bleu
-- phone-bois-accueil.png — alt : Accueil thème bois · légende : Accueil · thème bois
-- phone-cacao-interligne-nt.png — alt : Interlinéaire grec NTI — Marc 2 · légende : Interlinéaire NTI · Marc 2
-- phone-cacao-interligne-heb.png — alt : Interlinéaire hébreu ATI — Exode 2 · légende : Interlinéaire ATI · Exode 2
-- phone-cacao-interligne.png — alt : Grec mot à mot SES — Deutéronome 4 · légende : Grec mot à mot · Deut. 4
-- phone-cacao-septante.png — alt : Septante SEF, grec et français — Deutéronome 4 · légende : Septante SEF · Deut. 4
-- phone-basrelief-lexique.png — alt : Fiche Strong au clic dans le verset — Marc 2:8, kardia (G2588) · légende : Fiche Strong · Marc 2:8
-- phone-basrelief-dico.png — alt : Dictionnaire Westphal 1932 — article ESPRIT · légende : Westphal 1932 · ESPRIT
 
 ### Tablette (grille — en-tête « Tablette · 12 captures », indice « clique pour agrandir »)
 

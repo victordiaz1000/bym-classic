@@ -37,12 +37,12 @@
   --surface-2: #f6f0e2;
   --ink:       #241a10;
   --ink-soft:  #4b3e2f;
-  --muted:     #8a7760;
-  --accent:    #9a6716;
+  --muted:     #7a6650;
+  --accent:    #8f5f13;
   --accent-2:  #7d5310;
   --on-accent: #fffdf7;
   --ring:      rgba(36, 26, 16, .14);
-  --line-gold: rgba(154, 103, 22, .34);
+  --line-gold: rgba(143, 95, 19, .36);
   --glow:      rgba(154, 103, 22, .07);
   --nav-bg:    rgba(250, 246, 237, .85);
   --shadow:    0 36px 70px -40px rgba(60, 42, 20, .5);
