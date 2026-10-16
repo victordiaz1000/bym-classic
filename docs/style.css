@@ -52,7 +52,13 @@
 
 /* ===== Base ===== */
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+  /* aucun debordement horizontal (barre de defilement fantome sur telephone) */
+  overflow-x: hidden;
+  overflow-x: clip; /* les navigateurs qui le gèrent : sans conteneur de defilement */
+}
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -74,11 +80,13 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 
 .skip-link {
-  position: absolute; left: -999px; top: .6rem; z-index: 90;
+  /* hors champ par transform (pas de largeur hors-canvas => aucun panoramique horizontal) */
+  position: absolute; left: .6rem; top: .6rem; z-index: 90;
+  transform: translateY(-300%);
   background: var(--accent); color: var(--on-accent);
   padding: .65rem 1.2rem; font-weight: 600; letter-spacing: .06em;
 }
-.skip-link:focus { left: .6rem; }
+.skip-link:focus { transform: none; }
 
 ::-webkit-scrollbar { width: 11px; height: 11px; }
 ::-webkit-scrollbar-track { background: var(--bg-alt); }
