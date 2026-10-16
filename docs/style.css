@@ -128,12 +128,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
   font-weight: 500; font-size: 1.06rem; letter-spacing: .02em;
   white-space: nowrap;
 }
-.brand-sub {
-  font-size: .66rem; letter-spacing: .2em; text-transform: uppercase;
-  color: var(--muted); border-left: 1px solid var(--ring); padding-left: .75rem;
-  white-space: nowrap;
-}
-
 .nav-side { display: flex; gap: .5rem; align-items: center; }
 .icon-btn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -517,9 +511,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .index .entry:nth-child(even) { transition-delay: .09s; }
 
 /* ===== Responsive ===== */
-@media (max-width: 1080px) {
-  .brand-sub { display: none; }
-}
 @media (max-width: 960px) {
   .burger { display: inline-flex; }
   /* cibles tactiles confortables sur téléphone (44 px) */

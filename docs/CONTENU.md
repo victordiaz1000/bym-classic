@@ -4,7 +4,7 @@ Ce fichier résume **tout le texte** affiché sur `index.html`, pour pouvoir le 
 
 ## En-tête (navigation)
 
-- Marque : **BYM Classic** (avec logo `assets/icon.png`) — sous-titre : *Bible de Yehoshoua Ha Mashiah* (petites capitales, masqué sous 1080 px).
+- Marque : **BYM Classic** (avec logo `assets/icon.png`) — un seul titre dans le menu ; le sous-titre *Bible de Yehoshoua Ha Mashiah* apparaît uniquement au pied de page.
 - Liens : Fonctionnalités · Aperçus · Installation · Versions · Contact · Télécharger.
 - Boutons : thème clair/sombre du site, menu mobile (petits écrans).
 - Bouton principal : **Télécharger**.
