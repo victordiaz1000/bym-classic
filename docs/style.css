@@ -123,11 +123,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .brand { display: flex; align-items: center; gap: .75rem; margin-right: auto; min-width: 0; }
 .brand-logo { height: 27px; width: 27px; border-radius: 7px; border: 1px solid var(--line-gold); }
-.brand-name {
+.brand-name, .brand-name-lg {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 500; font-size: 1.06rem; letter-spacing: .02em;
   white-space: nowrap;
 }
+.brand-name-lg { display: none; }
 .nav-side { display: flex; gap: .5rem; align-items: center; }
 .icon-btn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -511,6 +512,11 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .index .entry:nth-child(even) { transition-delay: .09s; }
 
 /* ===== Responsive ===== */
+@media (min-width: 1280px) {
+  /* bureau large : nom complet dans le menu (sinon il percute les liens) */
+  .brand-name { display: none; }
+  .brand-name-lg { display: inline; }
+}
 @media (max-width: 960px) {
   .burger { display: inline-flex; }
   /* cibles tactiles confortables sur téléphone (44 px) */
