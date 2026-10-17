@@ -13,7 +13,7 @@
     [
       initSiteTheme, initSmoothScroll, initBurger, initScrollspy,
       initChrome, initReveal, initLightbox, initChangelog,
-      initYear, initContact,
+      initYear, initContact, initAnalytics,
     ].forEach((fn) => {
       try { fn(); } catch (e) { console.error('[BYM]', fn.name, e); }
     });
@@ -214,11 +214,28 @@
     const list = document.getElementById('changelog-list');
     if (!list) return;
 
-    fetch('https://api.github.com/repos/victordiaz1000/bym-classic/releases?per_page=6')
+    fetch('https://api.github.com/repos/victordiaz1000/bym-classic/releases?per_page=100')
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))
       .then((releases) => {
         if (!Array.isArray(releases) || !releases.length) return;
-        const blocks = releases.map(buildRelease).filter(Boolean);
+
+        // Nombre de téléchargements réels : somme des assets APK de
+        // toutes les releases. GitHub fournit ce compteur gratuitement
+        // (c'est le nombre de téléchargements effectifs, pas un
+        // estimateur) — aucune donnée n'est envoyée nulle part.
+        const totalDl = releases
+          .flatMap((rel) => rel.assets || [])
+          .filter((asset) => /\.apk$/i.test(asset.name || ''))
+          .reduce((sum, asset) => sum + (asset.download_count || 0), 0);
+        if (totalDl > 0) {
+          const num = document.getElementById('downloads-count');
+          const box = document.getElementById('downloads-total');
+          if (num) num.textContent = totalDl.toLocaleString('fr-FR');
+          if (box) { box.hidden = false; box.classList.add('in'); }
+        }
+
+        // Seules les 6 dernières versions sont affichées.
+        const blocks = releases.slice(0, 6).map(buildRelease).filter(Boolean);
         if (!blocks.length) return;
         list.replaceChildren(...blocks);
         const note = document.getElementById('releases-note');
@@ -285,6 +302,55 @@
       }
       return block;
     }
+  }
+
+  // ----------------------------------------------------------
+  // Statistiques privées (GoatCounter)
+  // ------------------------------------------------------------
+  // Le chargement du script de comptage est déclaré dans le <head>
+  // de index.html (balise officielle GoatCounter) : il compte les
+  // visites automatiquement. Ici on ne fait qu'ajouter le comptage
+  // des clics sur les boutons de téléchargement, que le script seul
+  // ne peut pas voir :
+  //   · le clic sur « Télécharger »   → événement 'download-apk'
+  //   · le clic dans « Versions »     → événement 'download-apk-release'
+  //   · le clic dans le menu          → événement 'nav-download'
+  // Rien n'est envoyé ailleurs que vers ton compte GoatCounter
+  // (sans cookie, sans IP, sans donnée personnelle).
+  // ----------------------------------------------------------
+  function initAnalytics() {
+    // count.js est chargé en async : on attend qu'il soit prêt.
+    function track(name, title) {
+      const send = () => {
+        try { window.goatcounter.count({ path: name, title, event: true }); }
+        catch (e) { console.warn('[BYM] track', e); }
+      };
+      if (window.goatcounter && window.goatcounter.count) { send(); return; }
+      let tries = 0;
+      const t = setInterval(() => {
+        tries += 1;
+        if (window.goatcounter && window.goatcounter.count) { clearInterval(t); send(); }
+        else if (tries > 50) clearInterval(t); // ~5 s puis on abandonne
+      }, 100);
+    }
+
+    // Bouton principal du hero.
+    document.getElementById('download')
+      ?.addEventListener('click', () => track('download-apk', "Télécharger l'APK"));
+
+    // Lien « Télécharger » du menu.
+    document.querySelector('.nav-cta')
+      ?.addEventListener('click', () => track('nav-download', 'Menu : bouton Télécharger'));
+
+    // Liens des releases, créés dynamiquement après l'appel API :
+    // on délègue au document pour les attraper même après le chargement.
+    document.addEventListener('click', (e) => {
+      const a = e.target && e.target.closest ? e.target.closest('a.release-link') : null;
+      // Seuls les liens avec l'attribut « download » lancent un vrai APK.
+      if (a && a.hasAttribute('download')) {
+        track('download-apk-release', 'Télécharger depuis les versions');
+      }
+    });
   }
 
   // ----------------------------------------------------------
