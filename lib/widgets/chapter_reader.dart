@@ -251,6 +251,16 @@ class _ChapterReaderState extends State<ChapterReader> {
     LibraryStore.revision.addListener(_onLibraryChanged);
     AppPreferences.revision.addListener(_onPreferencesChanged);
     BymUpdateService.textRevision.addListener(_onTextRevisionChanged);
+    // Réchauffe le lexique en tâche de fond : ses 8,8 Mo (14 195 entrées) se
+    // décodent sur le fil principal, et c'était le **première** consultation
+    // d'un mot qui en payait tout le prix — l'écran gelé, sans rien afficher
+    // pendant ce temps. Ici les mots ne deviennent tapables qu'une fois le
+    // chapitre rendu : le chargement a tout le temps de finir en amont.
+    // Reporté d'une frame pour ne pas entrer en concurrence avec le propre
+    // chargement du lecteur ([_bootstrap]).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      unawaited(StrongLexicon.instance.preload());
+    });
   }
 
   @override
@@ -2352,18 +2362,25 @@ class _ChapterReaderState extends State<ChapterReader> {
   /// spot, with the complete fiche one button away. Going straight to the full
   /// screen meant a whole route for a first look, where the reader only wanted
   /// to know which word this was.
+  ///
+  /// Le futur part **sans qu'on l'attende** : la feuille s'ouvre aussitôt sur
+  /// son squelette et l'entrée vient s'y poser. Attendre ici gelait l'écran au
+  /// premier tap du lexique — 8,8 Mo décodés sur le fil principal, sans rien
+  /// afficher pendant ce temps.
   Future<void> _onStrongInText(Verse _, String strong) async {
-    final definition = await StrongLexicon.instance.lookup(strong);
-    if (!mounted) return;
+    final pending = StrongLexicon.instance.lookup(strong);
     // Étape C : sur desktop la fiche s'épingle à droite au lieu d'une modale.
+    // Pas de coquille possible — c'est le même panneau, qui attend donc.
     if (AppBreakpoints.isDesktop(MediaQuery.sizeOf(context))) {
+      final definition = await pending;
+      if (!mounted) return;
       setState(() => _sideStrong = definition);
       return;
     }
     await showStrongExtractSheet(
       context,
-      strong: definition,
-      onOpenFull: () => _openStrongFiche(definition),
+      strong: pending,
+      onOpenFull: _openStrongFiche,
     );
   }
 

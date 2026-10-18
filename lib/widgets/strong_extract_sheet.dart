@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/strong_lexicon.dart';
+import 'loading_skeleton.dart';
 import 'premium_style.dart';
 import 'strong_lemma.dart';
 
@@ -17,10 +18,19 @@ import 'strong_lemma.dart';
 /// d'abord, la fiche ensuite, jamais l'écran complet au premier tap.
 /// [onOpenFull] part une fois la feuille fermée — derrière une feuille
 /// modale, une poussée ne se verrait pas.
+///
+/// [strong] arrive en attente : la feuille s'ouvre **aussitôt** sur
+/// [StrongExtractLoadingSkeleton] et l'entrée vient s'y poser. Le lexique
+/// pèse 8,8 Mo, et sa première charge — décodage de 14 195 entrées sur le fil
+/// principal — gelait l'écran sans le moindre retour visuel : le lecteur
+/// tapait, et rien ne se passait. La coquille paraît dans le même instant que
+/// le tap ; c'est le contenu qui arrive. `StrongLexicon.preload` engage par
+/// ailleurs cette charge dès l'ouverture du lecteur, pour que le premier tap
+/// ne paie rien du tout.
 Future<void> showStrongExtractSheet(
   BuildContext context, {
-  required StrongDefinition strong,
-  required Future<void> Function() onOpenFull,
+  required Future<StrongDefinition> strong,
+  required void Function(StrongDefinition strong) onOpenFull,
 }) => showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -35,7 +45,19 @@ Future<void> showStrongExtractSheet(
         ),
         child: Container(
           decoration: premiumSurface(context, radius: 24, depth: 1.3),
-          child: _StrongExtractSheet(strong: strong, onOpenFull: onOpenFull),
+          child: FutureBuilder<StrongDefinition>(
+            future: strong,
+            builder: (context, snapshot) {
+              final definition = snapshot.data;
+              if (definition == null) {
+                return const StrongExtractLoadingSkeleton();
+              }
+              return _StrongExtractSheet(
+                strong: definition,
+                onOpenFull: () => onOpenFull(definition),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -47,7 +69,7 @@ class _StrongExtractSheet extends StatelessWidget {
   });
 
   final StrongDefinition strong;
-  final Future<void> Function() onOpenFull;
+  final VoidCallback onOpenFull;
 
   /// La langue de l'entrée, lue comme la fiche la lit — le badge s'en teinte.
   bool get _isGreek =>

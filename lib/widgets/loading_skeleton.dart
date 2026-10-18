@@ -486,6 +486,102 @@ class ChapterLoadingSkeleton extends StatelessWidget {
   }
 }
 
+/// Animated placeholder for the Strong extract sheet shown on a tap over a
+/// word of the LSGS text (`showStrongExtractSheet`).
+///
+/// Décalqué sur la feuille réelle — même en-tête (badges, lemma,
+/// translittération, filet, numéro et prononciation), même champ de
+/// définition, même bouton — pour que l'arrivée de l'entrée ne fasse ni saut
+/// de mise en page ni glissement : le tap ouvre tout de suite la coquille, la
+/// définition vient s'y poser.
+class StrongExtractLoadingSkeleton extends StatelessWidget {
+  const StrongExtractLoadingSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingSkeleton(
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(20, 18, 20, 26),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // L'en-tête de la feuille, sur le même fond de carte.
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              decoration: BoxDecoration(
+                color: kSkeletonCardFill,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      SkeletonBox(width: 62, height: 24, radius: 12),
+                      SizedBox(width: 8),
+                      SkeletonBox(width: 86, height: 24, radius: 12),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const SkeletonBox(width: 132, height: 30, radius: 8),
+                  const SizedBox(height: 8),
+                  const SkeletonBox(width: 96, height: 12, radius: 5),
+                  const SizedBox(height: 14),
+                  const SkeletonBox(height: 1, radius: 0),
+                  const SizedBox(height: 12),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            SkeletonBox(width: 78, height: 10, radius: 4),
+                            SizedBox(height: 6),
+                            SkeletonBox(width: 54, height: 14, radius: 5),
+                          ],
+                        ),
+                      ),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: const [
+                            SkeletonBox(width: 82, height: 10, radius: 4),
+                            SizedBox(height: 6),
+                            SkeletonBox(width: 108, height: 12, radius: 5),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+            // Le champ « Définition brève ».
+            const SkeletonBox(width: 96, height: 10, radius: 4),
+            const SizedBox(height: 8),
+            const SkeletonBox(height: 12, radius: 5),
+            const SizedBox(height: 6),
+            const FractionallySizedBox(
+              widthFactor: .74,
+              alignment: Alignment.centerLeft,
+              child: SkeletonBox(height: 12, radius: 5),
+            ),
+            const SizedBox(height: 18),
+            // Le bouton « Voir la fiche complète », à sa hauteur réelle.
+            const SkeletonBox(height: 48, radius: 14),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Animated placeholder for a page of stacked cards ([ComparerScreen]): a
 /// centred reference header, the selection chips, then the version cards.
 class CardsLoadingSkeleton extends StatelessWidget {

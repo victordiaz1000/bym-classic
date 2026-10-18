@@ -183,6 +183,15 @@ class StrongLexicon {
   static final Map<String, StrongDefinition> _formes = {};
   static final Map<String, String> _normalized = {};
   static bool _loaded = false;
+
+  /// La charge en cours, partagée par tous ceux qui la demandent.
+  ///
+  /// [_loaded] ne passe à `true` qu'après le parcours complet : un deuxième
+  /// tap pendant ce temps entrait à son tour et repartait de zéro — double
+  /// lecture, double décodage, et personne pour l'attendre. Cette promesse
+  /// tient le chemin unique, quel que soit le nombre d'appelants.
+  static Future<void>? _loading;
+
   static List<String> _keys = const [];
   static AssetBundle _bundle = rootBundle;
 
@@ -195,6 +204,7 @@ class StrongLexicon {
     _normalized.clear();
     _keys = const [];
     _loaded = false;
+    _loading = null;
   }
 
   static void useRootBundle() => useBundle(rootBundle);
@@ -205,8 +215,20 @@ class StrongLexicon {
   /// [size], qui compte les lexies.
   int get formesCount => _formes.length;
 
-  Future<void> _ensureLoaded() async {
-    if (_loaded) return;
+  /// Réchauffe le lexique sans que personne n'attende le résultat.
+  ///
+  /// Le fichier pèse 8,8 Mo pour 14 195 entrées, et le décodage se fait sur
+  /// le fil principal : la **première** consultation d'un mot en payait tout
+  /// le prix, sans le moindre retour visuel — l'écran gelait le temps du
+  /// parcours. [preload] engage la charge dès que le lecteur s'ouvre, de
+  /// telle sorte que le premier tap la trouve déjà rangée. Un échec ne
+  /// retire rien : [lookup] referait la tentative sur le même chemin.
+  Future<void> preload() => _ensureLoaded();
+
+  Future<void> _ensureLoaded() =>
+      _loaded ? Future.value() : (_loading ??= _charge());
+
+  Future<void> _charge() async {
     try {
       final decoded = jsonDecode(await _bundle.loadString(_assetPath));
       final entries = decoded is Map && decoded['entries'] is Map
@@ -229,6 +251,9 @@ class StrongLexicon {
       _keys = const [];
     } finally {
       _loaded = true;
+      // Chemin fini, promesse levée : une charge ratée se retente au prochain
+      // appel, au lieu d'être scellée par une promesse résolue.
+      _loading = null;
     }
     // Fichiers distincts, échecs distincts : si l'un manque, le lexique
     // principal reste entier.
