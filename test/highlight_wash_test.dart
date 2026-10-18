@@ -10,7 +10,7 @@ void main() {
 
   group('highlightWash', () {
     test('a light theme keeps the pastel translucent', () {
-      final light = theme('parchemin');
+      final light = theme('oliveraie');
       expect(light.usesLightText, isFalse);
 
       final wash = light.highlightWash('#fff3b0');
@@ -52,7 +52,7 @@ void main() {
             dark.highlightWash(hex).value & 0xFFFFFF,
             reason: hex);
       }
-      final light = theme('parchemin');
+      final light = theme('oliveraie');
       expect(light.highlightDot('#fff3b0'), const Color(0xFFFFF3B0));
     });
   });

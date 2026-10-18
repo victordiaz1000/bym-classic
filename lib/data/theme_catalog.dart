@@ -87,7 +87,7 @@ class BibleTheme {
   /// Les couleurs des interlinéaires (ATI hébreu, NTI grec), calquées sur la
   /// source (Biblia) : le rouge de la glose, le vert de l'étiquette
   /// grammaticale, le bleu du numéro Strong. La source n'en connaît qu'une —
-  /// celle qui va sur son crème ; l'app en a quatorze thèmes, d'où deux
+  /// celle qui va sur son crème ; l'app en a douze thèmes, d'où deux
   /// variantes par couleur, profonde sur fond clair et vive sur fond sombre,
   /// choisies par [usesLightText]. Sans cela, le rouge de la glose deviendrait
   /// une tache illisible sur « Nuit étoilée ». Les deux grilles les partagent,
@@ -164,9 +164,9 @@ class BibleTheme {
   );
 }
 
-/// The 14 named themes — 10 fonds historiques + Sinaï (ocre chaud, 0% gris)
-/// + Nuit étoilée (second fond sombre, texture étoilée générée) + Lin blanc et
-/// Veillée (textures calculées par `appCodebar/generate_theme_textures.py`).
+/// The 12 named themes — 9 fonds historiques + Nuit étoilée (second fond sombre,
+/// texture étoilée générée) + Lin blanc et Veillée (textures calculées par
+/// `appCodebar/generate_theme_textures.py`).
 ///
 /// ⚠️ Les **ids** sont les noms des maquettes d'origine et ne disent plus rien
 /// du fond affiché : plusieurs thèmes ont été rebaptisés (ou re-pointés vers un
@@ -176,7 +176,6 @@ class BibleTheme {
 /// |------------------|------------------|
 /// | vitrail          | Bas-relief       |
 /// | oliveraie        | Oliveraie        |
-/// | parchemin        | Papier clair     |
 /// | papyrus          | Mosaïque grise   |
 /// | forest           | Bois doré        |
 /// | sepia            | Cacao            |
@@ -185,7 +184,6 @@ class BibleTheme {
 /// | desert           | Sable minéral    |
 /// | azur             | Azur profond     |
 /// | nuit             | Nuit étoilée     |
-/// | sinai            | Sinaï            |
 /// | lin              | Lin blanc        |
 /// | veillee          | Veillée          |
 ///
@@ -222,19 +220,6 @@ const List<BibleTheme> bibleThemes = [
     verseNumColor: Color(0xFF527044),
     accentColor: Color(0xFF45633A),
     highlightRef: Color(0xFF8B6F1F),
-  ),
-  BibleTheme(
-    id: 'parchemin',
-    name: 'Papier clair',
-    backgroundAsset: 'assets/themes/bg.png',
-    // Mappemonde pâle : scène unique, à couvrir comme le bas-relief.
-    backgroundFit: BackgroundFit.cover,
-    backgroundTone: Color(0xFFF2EBD9),
-    textColor: Color(0xFF342719),
-    titleColor: Color(0xFF664628),
-    verseNumColor: Color(0xFF8A6336),
-    accentColor: Color(0xFF8D6738),
-    highlightRef: Color(0xFFB8860B),
   ),
   BibleTheme(
     id: 'papyrus',
@@ -308,9 +293,9 @@ const List<BibleTheme> bibleThemes = [
     highlightRef: Color(0xFFB8860B),
   ),
   // Le premier fond sombre du lot (bleu azur vif, lum 93) : il exige du texte
-  // clair, contrairement aux 9 thèmes à texte sombre. Harmonie « bleu + or +
-  // blanc glacé » — l'or chaud contraste sur le bleu tout en restant le même
-  // langage que le liseré doré des notes des autres thèmes.
+  // clair, contrairement aux 8 thèmes à texte sombre qui le précèdent. Harmonie
+  // « bleu + or + blanc glacé » — l'or chaud contraste sur le bleu tout en
+  // restant le même langage que le liseré doré des notes des autres thèmes.
   BibleTheme(
     id: 'azur',
     name: 'Azur profond',
@@ -336,21 +321,7 @@ const List<BibleTheme> bibleThemes = [
     accentColor: Color(0xFFD9B44A),
     highlightRef: Color(0xFFE6BE55),
   ),
-  // Nouveau — Sinaï : pierre ocre du désert, chaleur terre cuite.
-  // Répond à la demande « sans gris » : ton pêche-ocre #E8B88A, aucune
-  // composante grise. Texte brun profond pour contraste sur fond clair.
-  BibleTheme(
-    id: 'sinai',
-    name: 'Sinaï',
-    backgroundAsset: 'assets/themes/sinai.png',
-    backgroundTone: Color(0xFFE8B88A),
-    textColor: Color(0xFF3B2312),
-    titleColor: Color(0xFF7A3A1E),
-    verseNumColor: Color(0xFF9E5A2E),
-    accentColor: Color(0xFFB85C2A),
-    highlightRef: Color(0xFFD18A1F),
-  ),
-  // Nouveau — Lin blanc : le seul thème **clair à accent bleu**. Les neuf autres
+  // Nouveau — Lin blanc : le seul thème **clair à accent bleu**. Les huit autres
   // palettes claires tirent toutes leur accent du brun, de l'ocre ou d'un gris
   // bleuté ; celle-ci pose une encre marine sur un ivoire de lin et réserve l'or
   // au liseré des notes. Fond tissé calculé (voir generate_theme_textures.py) :

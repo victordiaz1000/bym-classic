@@ -10,9 +10,9 @@ import 'package:bible_app/data/custom_background.dart';
 import 'package:bible_app/data/theme_catalog.dart';
 import 'package:bible_app/screens/themes_screen.dart';
 
-/// The two scene-like fonds (frieze, world map) cover the screen; every other
+/// The scene-like fond (the sculpted frieze) covers the screen; every other
 /// fond is a small seamless texture that must repeat as tiles.
-const Set<String> _coverThemes = {'vitrail', 'parchemin'};
+const Set<String> _coverThemes = {'vitrail'};
 
 /// The only dark palettes: their light text is what flips the whole app to
 /// dark surfaces (`usesLightText`), so it must stay in sync with the catalog.
@@ -131,19 +131,20 @@ void main() {
     expect(find.text('Aa'), findsWidgets);
     expect(find.text('12'), findsWidgets);
 
-    // Papier clair carries the world-map scene: cover, never repeated.
-    // The GridView is itself a Scrollable (shrinkWrap, never-scrollable), so
-    // the drag targets the outer ListView explicitly.
+    // Bas-relief carries the sculpted frieze: cover, never repeated — a scene
+    // stretched to fill, not a texture tiled. The GridView is itself a
+    // Scrollable (shrinkWrap, never-scrollable), so the drag targets the
+    // outer ListView explicitly.
     await tester.dragUntilVisible(
-      find.text('Papier clair'),
+      find.text('Bas-relief'),
       find.byType(ListView),
       const Offset(0, -300),
     );
     await tester.pumpAndSettle();
-    final map = imageOf('assets/themes/bg.png');
-    expect(map, isNotNull);
-    expect(map!.fit, BoxFit.cover);
-    expect(map.repeat, ImageRepeat.noRepeat);
+    final frieze = imageOf('assets/themes/assyriens.png');
+    expect(frieze, isNotNull);
+    expect(frieze!.fit, BoxFit.cover);
+    expect(frieze.repeat, ImageRepeat.noRepeat);
   });
 
   testWidgets('tapping a card saves the theme and says so', (tester) async {

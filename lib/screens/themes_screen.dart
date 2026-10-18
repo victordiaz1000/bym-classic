@@ -28,12 +28,10 @@ List<BibleTheme> _displayThemes() {
     'veillee',
     'oliveraie',
     'metal',
-    'parchemin',
+    'desert',
     'vitrail',
     'nuit',
-    'desert',
     'papyrus',
-    'sinai',
   ];
   return [for (final id in order) themeById(id)];
 }

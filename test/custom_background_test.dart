@@ -100,7 +100,7 @@ void main() {
     final blue = HSLColor.fromColor(CustomBackgroundStore.current!.accentColor);
 
     await CustomBackgroundStore.install(
-      await stageAsset('assets/themes/sinai.png', 'ocre.png'),
+      await stageAsset('assets/themes/bois.png', 'bois.png'),
     );
     final ocre = HSLColor.fromColor(CustomBackgroundStore.current!.accentColor);
 
@@ -112,7 +112,7 @@ void main() {
     expect(
       ocre.hue,
       inInclusiveRange(5, 80),
-      reason: 'sinai.png is ocre → the accent must be warm',
+      reason: 'bois.png is warm wood → the accent must be warm',
     );
   });
 

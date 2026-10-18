@@ -130,9 +130,9 @@ PremiumPalette _buildPalette(BibleTheme bt) {
 /// Les cartes prennent `p.surface` et la page [premiumBackground] : deux lerps
 /// du même ton de fond (58 % et 72 % de blanc). Sur les palettes claires et
 /// chaudes l'écart tombe à presque rien — rapport de contraste 1,015 sur Brume,
-/// 1,020 sur Oliveraie, 1,024 sur Papier clair, 1,047 sur Cacao, 1,084 sur
-/// Sinaï. Une ombre douce ne délimite alors plus la carte : elle en fait un bord
-/// flou, la carte se lit comme une tache. D'où ce liseré, tiré de la couleur du
+/// 1,020 sur Oliveraie, 1,047 sur Cacao. Une ombre douce ne délimite alors plus
+/// la carte : elle en fait un bord flou, la carte se lit comme une tache. D'où ce
+/// liseré, tiré de la couleur du
 /// texte pour rester neutre quelle que soit la palette (un liseré d'accent
 /// tournerait au cerne coloré sur les thèmes chauds).
 ///
