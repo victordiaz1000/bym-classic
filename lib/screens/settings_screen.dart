@@ -20,11 +20,12 @@ import '../widgets/premium_style.dart';
 import 'themes_screen.dart';
 
 /// Version de l'**application** telle que `pubspec.yaml` la déclare
-/// (`version: 1.0.0+1`), valeur de repli quand `package_info_plus` ne répond
-/// pas — la version affichée vient normalement du manifeste installé. La
-/// version du **texte**, elle, se lit à l'exécution et n'a pas besoin d'être
+/// (`version: 1.0.2+3`), valeur de repli quand `package_info_plus` ne répond
+/// pas — la version affichée vient normalement du manifeste installé. À
+/// remonter à chaque bump de version : c'est la seule valeur écrite à la main.
+/// La version du **texte**, elle, se lit à l'exécution et n'a pas besoin d'être
 /// écrite ici.
-const String appVersion = '1.0.0';
+const String appVersion = '1.0.2';
 
 /// Réglages — destination de la coquille.
 ///
@@ -700,9 +701,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final info = await PackageInfo.fromPlatform();
       if (!mounted || info.version.isEmpty) return;
       setState(() {
+        // Le versionCode ne se lit pas comme une précision de version : « 1.0.2+3 »
+        // laisse penser à une révision du texte. On le nomme, pour qu'un rebuild
+        // d'une même version reste identifiable sans polluer le numéro principal.
         _appVersion = info.buildNumber.isEmpty
             ? info.version
-            : '${info.version}+${info.buildNumber}';
+            : '${info.version} (build ${info.buildNumber})';
       });
     } catch (_) {
       // On garde la constante de repli : la version du pubspec est juste à une
