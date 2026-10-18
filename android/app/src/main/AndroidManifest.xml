@@ -1,5 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- L'application télécharge ses mises à jour depuis GitHub Releases et
+         confie l'APK vérifié à l'installeur du système. Sur Android 8 et
+         suivants, l'utilisateur doit en plus autoriser « installer des
+         applications inconnues » pour BYM : la permission ci-dessous déclare
+         l'intention, l'autorisation reste la sienne. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
     <application
         android:label="Bym classic"
         android:name="${applicationName}"

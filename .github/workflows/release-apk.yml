@@ -82,11 +82,20 @@ jobs:
             echo "name=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Préparer l'asset
+      - name: Préparer les assets
+        # Le tag porte le « v » (`v1.0.1`), le nom de fichier non : l'application
+        # cherche `bym-1.0.1.apk`, dérivé de la version qu'elle lit, et la même
+        # convention que le site (`releases/download/v1.0.0/bym-1.0.0.apk`).
         run: |
           TAG="${{ steps.tag.outputs.name }}"
-          cp build/app/outputs/flutter-apk/app-release.apk "bym-${TAG}.apk"
-          echo "ASSET=bym-${TAG}.apk" >> "$GITHUB_ENV"
+          VERSION="${TAG#v}"
+          cp build/app/outputs/flutter-apk/app-release.apk "bym-${VERSION}.apk"
+          # Empreinte publiée à côté de l'APK : l'application la compare au
+          # fichier téléchargé avant de confier quoi que ce soit à l'installeur.
+          # Sans elle, la mise à jour in-app refuse la release.
+          (cd "$(dirname "bym-${VERSION}.apk")" && sha256sum "bym-${VERSION}.apk" > "bym-${VERSION}.apk.sha256")
+          echo "ASSET=bym-${VERSION}.apk" >> "$GITHUB_ENV"
+          echo "CHECKSUM=bym-${VERSION}.apk.sha256" >> "$GITHUB_ENV"
 
       - name: Publier la Release GitHub
         uses: softprops/action-gh-release@v2
@@ -96,7 +105,9 @@ jobs:
           body: |
             Version ${{ steps.tag.outputs.name }} de BYM — Bible de Yehoshoua Ha Mashiah.
             Voir la page de présentation pour les nouveautés.
-          files: ${{ env.ASSET }}
+          files: |
+            ${{ env.ASSET }}
+            ${{ env.CHECKSUM }}
           draft: false
           prerelease: false
         env:

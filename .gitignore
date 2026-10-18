@@ -57,3 +57,6 @@ app.*.map.json
 /android/key.properties
 *.jks
 *.keystore
+
+# Images de diff écrites par flutter test quand un golden échoue.
+/test/failures/

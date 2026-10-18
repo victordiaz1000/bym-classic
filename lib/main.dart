@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'data/app_update_service.dart';
 import 'data/bym_update_service.dart';
 import 'data/bym_update_store.dart';
 import 'data/share_text.dart';
@@ -53,6 +54,10 @@ class _BymAppState extends State<BymApp> with WidgetsBindingObserver {
     // sans un appui de l'utilisateur dans Réglages.
     _storeReady = BymUpdateStore.load();
     _storeReady.then((_) => BymUpdateChecker.maybeCheck());
+    // Deuxième vérification silencieuse, indépendante : la version de
+    // l'application. Elle interroge l'API GitHub une fois par jour au plus et
+    // ne lève jamais — hors ligne, le démarrage reste identique.
+    AppUpdateChecker.maybeCheck();
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -78,6 +83,7 @@ class _BymAppState extends State<BymApp> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state != AppLifecycleState.resumed) return;
     _storeReady.then((_) => BymUpdateChecker.maybeCheck());
+    AppUpdateChecker.maybeCheck();
   }
 
   @override

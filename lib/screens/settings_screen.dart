@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../data/app_preferences.dart';
+import '../data/app_update_installer.dart';
+import '../data/app_update_service.dart';
 import '../data/bym_update_service.dart';
 import '../data/bym_update_store.dart';
 import '../data/fulltext_index.dart';
@@ -17,9 +20,10 @@ import '../widgets/premium_style.dart';
 import 'themes_screen.dart';
 
 /// Version de l'**application** telle que `pubspec.yaml` la déclare
-/// (`version: 1.0.0+1`). À tenir en phase avec lui à chaque publication sur le
-/// store — la version du **texte**, elle, se lit à l'exécution et n'a pas
-/// besoin d'être écrite ici.
+/// (`version: 1.0.0+1`), valeur de repli quand `package_info_plus` ne répond
+/// pas — la version affichée vient normalement du manifeste installé. La
+/// version du **texte**, elle, se lit à l'exécution et n'a pas besoin d'être
+/// écrite ici.
 const String appVersion = '1.0.0';
 
 /// Réglages — destination de la coquille.
@@ -33,7 +37,15 @@ class SettingsScreen extends StatefulWidget {
   /// le service qu'il a lui-même créé.
   final BymUpdateService? updateService;
 
-  const SettingsScreen({super.key, this.updateService});
+  /// Même contrat pour la mise à jour de l'application : un faux installeur
+  /// permet de vérifier l'écran sans toucher au réseau ni au cache.
+  final AppUpdateInstaller? appUpdateInstaller;
+
+  const SettingsScreen({
+    super.key,
+    this.updateService,
+    this.appUpdateInstaller,
+  });
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -92,10 +104,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
   /// geste.
   String? _updateMessage;
 
+  /// Mise à jour de l'application : téléchargement, vérification, installeur.
+  late final AppUpdateInstaller _appInstaller =
+      widget.appUpdateInstaller ?? AppUpdateInstaller();
+
+  /// Version installée, lue une fois du manifeste réellement en place.
+  String _appVersion = appVersion;
+
+  /// Téléchargement de l'APK en cours : la rangée se verrouille et la barre
+  /// affiche l'avancement.
+  bool _appBusy = false;
+  AppUpdateProgress? _appProgress;
+  String? _appMessage;
+
   @override
   void initState() {
     super.initState();
     _load();
+    _loadAppVersion();
     // The settings screen survives in the shell's IndexedStack: without this it
     // keeps the registry as it stood when it was built, so a version downloaded
     // in the Bibliothèque would not show up in the storage list.
@@ -117,6 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     BymUpdateStore.revision.removeListener(_onLibraryChanged);
     AppPreferences.revision.removeListener(_onPreferencesChanged);
     if (widget.updateService == null) _updates.close();
+    if (widget.appUpdateInstaller == null) _appInstaller.close();
     super.dispose();
   }
 
@@ -665,6 +692,219 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  /// Version installée, lue du manifeste. Détachée de [initState] : le paquet
+  /// passe par un canal de plateforme, et l'écran doit s'afficher même si le
+  /// canal ne répond jamais.
+  Future<void> _loadAppVersion() async {
+    try {
+      final info = await PackageInfo.fromPlatform();
+      if (!mounted || info.version.isEmpty) return;
+      setState(() {
+        _appVersion = info.buildNumber.isEmpty
+            ? info.version
+            : '${info.version}+${info.buildNumber}';
+      });
+    } catch (_) {
+      // On garde la constante de repli : la version du pubspec est juste à une
+      // publication près, et l'écran n'a pas à dépendre d'un canal natif.
+    }
+  }
+
+  /// La section « MISE À JOUR DE L'APPLICATION ».
+  ///
+  /// Elle suit le même notificateur que le bandeau du lecteur et la pastille de
+  /// la Bibliothèque ([AppUpdateChecker.available]) : les trois ne peuvent pas
+  /// se contredire. Chaque canal publié a sa rangée — GitHub aujourd'hui, les
+  /// stores quand leurs identifiants existeront — et c'est la rangée, jamais le
+  /// bandeau, qui télécharge.
+  Widget _appUpdateSection() {
+    return ValueListenableBuilder<AppUpdateRelease?>(
+      valueListenable: AppUpdateChecker.available,
+      builder: (context, release, _) {
+        return _SettingsCard(
+          children: [
+            _SettingsRow(
+              icon: Icons.smartphone,
+              title: 'Application installée',
+              subtitle: 'Version $_appVersion',
+            ),
+            _Divider(),
+            if (release == null)
+              _SettingsRow(
+                icon: Icons.verified_outlined,
+                title: 'Vérifier une nouvelle version',
+                subtitle: _appMessage ?? 'La dernière publiée est installée.',
+                trailing: const Icon(Icons.refresh),
+                onTap: _appBusy ? null : _checkAppUpdate,
+              )
+            else ...[
+              _SettingsRow(
+                icon: Icons.system_update_alt,
+                title: _appBusy
+                    ? 'Téléchargement en cours…'
+                    : 'Installer la ${release.version} depuis '
+                        '${release.channel.label}',
+                subtitle: _appSubtitle(release),
+                trailing: _appBusy
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.download),
+                onTap: _appBusy ? null : () => _installAppUpdate(release),
+                below: _appBelow(),
+              ),
+              // Les stores n'existent pas encore : la rangée le dit au lieu de
+              // disparaître sans explication, et n'est jamais un bouton mort.
+              for (final channel in UpdateChannel.values)
+                if (channel != release.channel) ...[
+                  _Divider(),
+                  _SettingsRow(
+                    icon: channel == UpdateChannel.github
+                        ? Icons.download
+                        : Icons.storefront_outlined,
+                    title: channel == UpdateChannel.github
+                        ? 'GitHub Releases'
+                        : channel.label,
+                    subtitle: channel == UpdateChannel.github
+                        ? 'Canal utilisé pour cette version'
+                        : channel == UpdateChannel.playStore
+                            ? 'Bientôt disponible sur Google Play'
+                            : 'Bientôt disponible sur l’App Store',
+                  ),
+                ],
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  /// Notes de publication, réduites à une ligne : la rangée n'a pas à enfler.
+  String? _appSubtitle(AppUpdateRelease release) {
+    if (_appBusy && _appProgress != null) return null;
+    if (_appMessage != null) return _appMessage;
+    final notes = release.notes
+        .split('\n')
+        .map((l) => l.trim())
+        .firstWhere((l) => l.isNotEmpty, orElse: () => '');
+    if (notes.isEmpty) return 'Téléchargement puis installation vérifiée';
+    return notes.length > 120 ? '${notes.substring(0, 119)}…' : notes;
+  }
+
+  /// Barre de progression du téléchargement de l'APK, avec son abandon — même
+  /// dessin que celle du texte, pour que les deux se lisent d'un même œil.
+  Widget? _appBelow() {
+    final progress = _appProgress;
+    if (progress == null) return null;
+    final p = premiumPalette(context);
+    final fraction = progress.fraction;
+    final mb = progress.received / (1024 * 1024);
+    final total = progress.total;
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: LinearProgressIndicator(
+              key: const Key('appUpdateProgress'),
+              value: fraction,
+              minHeight: 6,
+              color: p.primary,
+              backgroundColor: p.primarySoft,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  total == null
+                      ? '${mb.toStringAsFixed(1)} Mo'
+                      : '${mb.toStringAsFixed(1)} / '
+                          '${(total / (1024 * 1024)).toStringAsFixed(1)} Mo',
+                  style: premiumText(context, 12, FontWeight.w500, p.textGrey),
+                ),
+              ),
+              TextButton(
+                onPressed: _appInstaller.cancel,
+                child: Text(
+                  'Annuler',
+                  style: premiumText(context, 13, FontWeight.w700, p.primary),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Vérifie à la main, sans attendre les 24 h : c'est le geste de quelqu'un qui
+  /// vient de lire « à jour » et veut en avoir le cœur net.
+  Future<void> _checkAppUpdate() async {
+    if (_appBusy) return;
+    setState(() {
+      _appBusy = true;
+      _appMessage = null;
+    });
+    try {
+      await AppUpdateChecker.maybeCheck(force: true);
+      if (!mounted) return;
+      final release = AppUpdateChecker.available.value;
+      setState(() {
+        _appMessage = release == null
+            ? 'L’application est à jour.'
+            : 'Version ${release.version} disponible.';
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _appMessage = 'Vérification impossible pour le moment.');
+    } finally {
+      if (mounted) setState(() => _appBusy = false);
+    }
+  }
+
+  /// Télécharge et installe la release du canal nommé.
+  Future<void> _installAppUpdate(AppUpdateRelease release) async {
+    if (_appBusy) return;
+    setState(() {
+      _appBusy = true;
+      _appMessage = null;
+      _appProgress = AppUpdateProgress(received: 0, total: release.sizeBytes);
+    });
+    try {
+      final status = await _appInstaller.install(
+        release,
+        onProgress: (progress) {
+          if (mounted) setState(() => _appProgress = progress);
+        },
+      );
+      if (!mounted) return;
+      setState(() {
+        _appMessage = status.message;
+        _appProgress = null;
+        // L'installeur du système a l'APK : la vérification est allée au bout,
+        // on ne repropose pas la même version tant que l'application tourne.
+        if (status.ok) AppUpdateChecker.clear();
+      });
+      if (status.ok) {
+        _snack(status.message, duration: const Duration(seconds: 4));
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _appMessage = 'Téléchargement impossible pour le moment.';
+        _appProgress = null;
+      });
+    } finally {
+      if (mounted) setState(() => _appBusy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = premiumPalette(context);
@@ -1016,6 +1256,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 10),
                   _updateSection(),
                   const SizedBox(height: 18),
+                  _SectionBadge('MISE À JOUR DE L’APPLICATION'),
+                  const SizedBox(height: 10),
+                  _appUpdateSection(),
+                  const SizedBox(height: 18),
                   _SectionBadge('À PROPOS'),
                   const SizedBox(height: 10),
                   _SettingsCard(
@@ -1027,7 +1271,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         // évoluent séparément, et c'est tout l'intérêt du
                         // système de mise à jour. La section ci-dessus dit la
                         // version du texte.
-                        subtitle: 'Application $appVersion',
+                        subtitle: 'Application $_appVersion',
                       ),
                       _Divider(),
                       _SettingsRow(

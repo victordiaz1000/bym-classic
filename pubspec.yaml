@@ -49,6 +49,13 @@ dependencies:
   path: ^1.9.0
   share_plus: ^13.3.0
   image_picker: ^1.2.3
+  # Version réellement installée (`versionName`/`versionCode`) : la mise à jour
+  # de l'application la compare aux tags publiés, et Réglages l'affiche. Lire
+  # `pubspec.yaml` depuis l'APK n'est pas possible — il n'est pas embarqué.
+  package_info_plus: ^10.2.2
+  # Ouvre l'APK téléchargé dans l'installeur du système. Passe par le FileProvider
+  # du paquet : aucune configuration de manifeste à écrire à la main.
+  open_filex: ^4.6.0
 
 dev_dependencies:
   flutter_test:

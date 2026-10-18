@@ -100,7 +100,7 @@ void main() {
     await tester.pumpWidget(host(const BymUpdateBanner()));
 
     double offset() => tester
-        .widget<Transform>(find.byKey(const Key('bymUpdateMarquee')))
+        .widget<Transform>(find.byKey(const Key('marqueeText')))
         .transform
         .getTranslation()
         .x;
@@ -151,7 +151,7 @@ void main() {
     await tester.pumpWidget(host(const BymUpdateBanner(), width: 780));
 
     double offset() => tester
-        .widget<Transform>(find.byKey(const Key('bymUpdateMarquee')))
+        .widget<Transform>(find.byKey(const Key('marqueeText')))
         .transform
         .getTranslation()
         .x;
@@ -207,7 +207,7 @@ void main() {
 
     // Une seule copie, tronquée, immobile : un défilement perpétuel qu'on ne
     // peut pas arrêter est exactement ce que ce réglage demande d'éviter.
-    expect(find.byKey(const Key('bymUpdateMarquee')), findsNothing);
+    expect(find.byKey(const Key('marqueeText')), findsNothing);
     final text = tester.widget<Text>(
       find.textContaining('Mettre à jour le texte BYM'),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/app_update_service.dart';
 import '../data/bym_update_service.dart';
 import '../data/dictionary_catalog.dart';
 import '../data/dictionary_download_service.dart';
@@ -385,9 +386,37 @@ class _LibraryScreenState extends State<LibraryScreen> {
     // dans l'APK, donc corriger une coquille passerait sinon par le store. Les
     // autres versions se téléchargent en entier depuis la Bibliothèque.
     if (version.code != VersionRepository.embeddedCode) return build(null);
-    return ValueListenableBuilder<BymUpdateCheck?>(
-      valueListenable: BymUpdateChecker.available,
-      builder: (context, plan, _) => build(plan?.bookLabel),
+    // Deux annonces se rencontrent sur cette tuile — le texte et l'application —
+    // et elles ne disent pas la même chose : la tuile porte la correction du
+    // texte, la pastille sous elle la nouvelle version de l'application.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ValueListenableBuilder<BymUpdateCheck?>(
+          valueListenable: BymUpdateChecker.available,
+          builder: (context, plan, _) => build(plan?.bookLabel),
+        ),
+        ValueListenableBuilder<AppUpdateRelease?>(
+          valueListenable: AppUpdateChecker.available,
+          builder: (context, release, _) {
+            if (release == null) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 6),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _UpdatePill(
+                    key: const Key('appUpdatePill'),
+                    icon: Icons.system_update_alt,
+                    label: 'app ${release.version}',
+                    onTap: widget.onOpenSettings,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
@@ -791,6 +820,11 @@ class _VersionTile extends StatelessWidget {
 
 /// Rappel « une correction du texte BYM est en ligne », sur la tuile BYM.
 ///
+/// Sert aussi, avec un autre glyphe, à annoncer une nouvelle version de
+/// l'application : dans les deux cas l'appui conduit à Réglages et **rien
+/// d'autre**. Une pastille qui lancerait un téléchargement au premier
+/// effleurement serait un piège.
+///
 /// L'appui conduit à Réglages et **rien d'autre** : le choix de télécharger
 /// appartient à l'utilisateur, dans l'écran qui montre les notes de publication
 /// et le poids. Une pastille qui lancerait 9 Mo au premier effleurement serait un
@@ -799,7 +833,16 @@ class _UpdatePill extends StatelessWidget {
   final String label;
   final VoidCallback? onTap;
 
-  const _UpdatePill({required this.label, this.onTap});
+  /// Glyphe de la pastille : l'étincelle pour une correction du texte, la flèche
+  /// de mise à jour système pour une nouvelle version de l'application.
+  final IconData icon;
+
+  const _UpdatePill({
+    super.key,
+    required this.label,
+    this.onTap,
+    this.icon = Icons.auto_awesome,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -825,7 +868,7 @@ class _UpdatePill extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.auto_awesome, size: 12, color: p.onPrimary),
+              Icon(icon, size: 12, color: p.onPrimary),
               const SizedBox(width: 5),
               Text(
                 'MàJ · $label',
