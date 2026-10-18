@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bible_app/data/app_preferences.dart';
 import 'package:bible_app/data/fredaw_lexicon.dart';
 import 'package:bible_app/data/strong_lexicon.dart';
+import 'package:bible_app/data/version_repository.dart';
 import 'package:bible_app/models/lsgs.dart';
 import 'package:bible_app/screens/etude_verset_screen.dart';
 
@@ -34,9 +35,8 @@ void main() {
     ],
     MemoryDictionaryStore? dictionaryStore,
     bool dbsAvailable = false,
-    bool dbsOnly = false,
     bool sesAvailable = false,
-    bool sefOnly = false,
+    String? corpusExclusif,
     int bookIndex = 1,
     String? corpusCode,
   }) async {
@@ -51,9 +51,8 @@ void main() {
         tokens: tokens,
         dictionaryStore: dictionaryStore,
         dbsAvailable: dbsAvailable,
-        dbsOnly: dbsOnly,
         sesAvailable: sesAvailable,
-        sefOnly: sefOnly,
+        corpusExclusif: corpusExclusif,
       ),
     ));
     await tester.pumpAndSettle();
@@ -166,7 +165,7 @@ void main() {
     await pumpScreen(
       tester,
       dbsAvailable: true,
-      dbsOnly: true,
+      corpusExclusif: VersionRepository.dbsCode,
       sesAvailable: true,
     );
 
@@ -186,7 +185,7 @@ void main() {
     await pumpScreen(
       tester,
       sesAvailable: true,
-      sefOnly: true,
+      corpusExclusif: VersionRepository.sesCode,
       dbsAvailable: true,
     );
 
@@ -197,6 +196,28 @@ void main() {
     expect(find.text('LSS — Segond Louis + Strong'), findsNothing);
     expect(find.text('LSGS — Segond 1910 + Strongs'), findsNothing);
     expect(find.text('DBS — Darby + Strong'), findsNothing);
+  });
+
+  testWidgets('in Segond 1910 reading the picker only knows the LSGS',
+      (tester) async {
+    // La LSG nue n'a aucun ancre : son corpus est la LSGS, la même traduction
+    // ancre par ancre. Pas de mélange — même la LSS, qui est pourtant un
+    // Segond, ne s'y invite pas : chacun son corpus, la BYM seule en a tous.
+    await pumpScreen(
+      tester,
+      corpusExclusif: VersionRepository.lsgsCode,
+      corpusCode: VersionRepository.lsgsCode,
+      dbsAvailable: true,
+      sesAvailable: true,
+    );
+
+    await tester.tap(find.byTooltip('Corpus du lexique'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('LSGS — Segond 1910 + Strongs'), findsOneWidget);
+    expect(find.text('LSS — Segond Louis + Strong'), findsNothing);
+    expect(find.text('DBS — Darby + Strong'), findsNothing);
+    expect(find.text('SES — Septuaginta grec + Strong'), findsNothing);
   });
 
   testWidgets('tapping a Strong word shows its card', (tester) async {

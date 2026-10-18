@@ -1506,15 +1506,17 @@ class _ChapterReaderState extends State<ChapterReader> {
     // BYM-format version keeps the button where `code == 'BYM'` would drop it.
     // LSGS and LSS themselves no longer reach this sheet — the gate above
     // takes them out — and so do the interlinears. Des versions nues, la
-    // Darby (DBY) ouvre le lexique avec son propre corpus DBS, et la
-    // Septante en français (SEF) avec le grec SES : même texte grec,
-    // même versification des Septante. Les autres traductions nues restent
-    // fermées plutôt que d'offrir un verset Strong qui ne correspondrait
-    // peut-être pas au leur.
+    // Darby (DBY) ouvre le lexique avec son propre corpus DBS, la
+    // Septante en français (SEF) avec le grec SES — même texte grec,
+    // même versification des Septante — et la Segond 1910 (LSG) avec la
+    // LSGS : même traduction, mêmes versets, ancre par ancre. Les
+    // autres traductions nues restent fermées plutôt que d'offrir un verset
+    // Strong qui ne correspondrait peut-être pas au leur.
     final lexiqueEnabled =
         (versionByCode(_versionCode)?.carriesNotes ?? false) ||
             _versionCode == VersionRepository.dbyCode ||
-            _versionCode == VersionRepository.sefCode;
+            _versionCode == VersionRepository.sefCode ||
+            _versionCode == VersionRepository.lsgCode;
     // Étape C2 : sur desktop la feuille d'étude devient le panneau latéral —
     // mêmes pastilles, mêmes tuiles, sans modale.
     if (AppBreakpoints.isDesktop(MediaQuery.sizeOf(context))) {
@@ -2152,8 +2154,10 @@ class _ChapterReaderState extends State<ChapterReader> {
   /// Strong code is tappable ([EtudeVersetScreen]) — the BYM text proposes
   /// its own equivalent verse in the Strong version. Read in Darby nue (DBY),
   /// the study only knows its own corpus (DBS) ; read in Septante française
-  /// (SEF), the SES grecque — même texte grec, même versification : le corpus
-  /// suit la version lue, et invite vers la Bibliothèque quand il manque —
+  /// (SEF), the SES grecque — même texte grec, même versification des
+  /// Septante. En lecture Segond nue (LSG), la LSGS : la même traduction,
+  /// ancre par ancre. Le corpus suit la version lue, et invite vers la
+  /// Bibliothèque quand il manque —
   /// jamais un repli silencieux sur le Segond. The study screen combines
   /// the Strong lexicon (hébreu/grec) and the Westphal dictionary, with
   /// prev/next verse navigation within the current chapter.
@@ -2164,6 +2168,7 @@ class _ChapterReaderState extends State<ChapterReader> {
     // propre corpus.
     final darby = _versionCode == VersionRepository.dbyCode;
     final septante = _versionCode == VersionRepository.sefCode;
+    final segond = _versionCode == VersionRepository.lsgCode;
     // Ni la DBS ni la SES ne sont des corpus d'étude sans leur livre
     // téléchargé : pas d'étude sur un autre texte — une invitation vers la
     // Bibliothèque, qui est l'endroit où le téléchargement se fait.
@@ -2206,6 +2211,14 @@ class _ChapterReaderState extends State<ChapterReader> {
       etude.versionCode = corpus;
       await etude.save();
     }
+    // En lecture Segond nue, l'étude s'ouvre sur la LSGS : le même texte,
+    // ancre par ancre. Un corpus Darby ou grec laissé par une session
+    // précédente serait une autre traduction que celle lue.
+    if (segond && corpus != VersionRepository.lsgsCode) {
+      corpus = VersionRepository.lsgsCode;
+      etude.versionCode = corpus;
+      await etude.save();
+    }
     final tokens = await _versions.tokensFor(
       corpus,
       widget.bookIndex,
@@ -2224,12 +2237,16 @@ class _ChapterReaderState extends State<ChapterReader> {
           verseNumber: verseNumber,
           tokens: tokens,
           dbsAvailable: dbsAvailable,
-          // En lecture Darby comme en Septante, l'étude ne connaît que le
-          // corpus de la version lue ; la BYM reste la seule version à
-          // disposer de tous les corpus.
-          dbsOnly: darby,
           sesAvailable: sesAvailable,
-          sefOnly: septante,
+          // Chaque version n'a que le corpus de son propre texte ; la BYM
+          // reste la seule version à disposer de tous les corpus.
+          corpusExclusif: darby
+              ? VersionRepository.dbsCode
+              : septante
+                  ? VersionRepository.sesCode
+                  : segond
+                      ? VersionRepository.lsgsCode
+                      : null,
           verseNumbers: verseNumbers,
           loadVerseTokens: (v) async {
             // Relue à chaque appel, non capturée à l'ouverture : le corpus se

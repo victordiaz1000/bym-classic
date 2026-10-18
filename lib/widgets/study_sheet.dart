@@ -320,7 +320,7 @@ class StudySheetBodyState extends State<StudySheetBody> {
             // les deux états ; cette ligne dit la seule chose qu'il ne dit pas —
             // d'où elle s'ouvre.
             Text(
-              'Disponible depuis les textes BYM et Darby.',
+              'Disponible depuis les textes BYM, Darby, Septante et Segond.',
               textAlign: TextAlign.center,
               style: premiumText(context, 11.5, FontWeight.w600, p.textGrey),
             ),

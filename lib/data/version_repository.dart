@@ -72,6 +72,15 @@ class VersionRepository {
   static const String embeddedCode = 'BYM';
   static const String lsgsCode = 'LSGS';
 
+  /// La Segond 1910 **nue** (getbible `ls1910`), version de lecture. Elle ne
+  /// porte aucun numéro Strong, mais la feuille d'étude s'y ouvre comme sur la
+  /// BYM : son corpus est la [lsgsCode], la même traduction ancre par ancre.
+  ///
+  /// Comme [dbyCode] (DBS) et [sefCode] (SES), elle n'a que son propre
+  /// corpus : seuls les ancrages du texte lu sont proposés, sans mélange.
+  /// La BYM est la seule version à disposer de tous les corpus.
+  static const String lsgCode = 'LSG';
+
   /// Le corpus Strong de Biblia (« Segond Louis + Strong »), embarqué dans
   /// `assets/bible/lss/` : même schéma que la LSGS, ancres plus denses — il
   /// numérote les particules que la LSGS ignore (waw, article, préfixes), ce

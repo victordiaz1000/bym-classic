@@ -306,9 +306,10 @@ void main() {
     );
 
     // Et la raison, écrite : gris seul, le lecteur voit que c'est fermé sans
-    // savoir pourquoi ni comment l'ouvrir.
+    // savoir pourquoi ni comment l'ouvrir. Les quatre textes qui l'ouvrent —
+    // la BYM, la Darby, la Septante et la Segond — y passent par leur corpus.
     expect(
-      find.text('Disponible depuis les textes BYM et Darby.'),
+      find.text('Disponible depuis les textes BYM, Darby, Septante et Segond.'),
       findsOneWidget,
     );
   });
@@ -419,7 +420,7 @@ void main() {
     // valait sa propre couleur à 55 % : autant dire rien. Seize disques sans
     // contour posés sur une carte crème, et la rangée entière paraissait hors
     // de mise au point.
-    await pumpSheet(tester, themeId: 'sinai');
+    await pumpSheet(tester, themeId: 'desert');
     final deco =
         tester.widget<Container>(colorDot(green)).decoration! as BoxDecoration;
     final edge = (deco.border! as Border).top;
@@ -435,7 +436,7 @@ void main() {
   testWidgets(
     'la pastille choisie porte l’anneau d’accent et une coche lisible',
     (tester) async {
-      await pumpSheet(tester, themeId: 'sinai', currentHighlight: amber);
+      await pumpSheet(tester, themeId: 'desert', currentHighlight: amber);
       final p = paletteOf(tester);
       final deco =
           tester.widget<Container>(colorDot(amber)).decoration!

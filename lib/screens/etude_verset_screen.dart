@@ -143,21 +143,25 @@ class EtudeVersetScreen extends StatefulWidget {
   /// de l'utilisateur ait rien changé.
   final bool dbsAvailable;
 
-  /// En lecture Darby, l'étude ne connaît que son propre corpus : le sélecteur
-  /// n'offre que la DBS, la BYM restant la seule version à disposer de tous
-  /// les corpus. N'a de sens qu'avec [dbsAvailable] — sans le livre
-  /// téléchargé, le lecteur n'ouvre pas cet écran mais invite vers la
-  /// Bibliothèque.
-  final bool dbsOnly;
-
-  /// La SES est proposée comme quatrième corpus du lexique quand son livre
-  /// est téléchargé — même contrat que [dbsAvailable], et cachée en lecture
-  /// Darby ([dbsOnly]), qui n'a que son propre corpus.
+  /// Le miroir de [dbsAvailable] pour la SES, la quatrième proposition.
   final bool sesAvailable;
 
-  /// Le miroir de [dbsOnly] pour la Septante : en lecture SEF, le sélecteur
-  /// n'offre que la SES. Même contrat, avec [sesAvailable].
-  final bool sefOnly;
+  /// Le corpus que le sélecteur propose **seul** — la traduction lue est
+  /// déjà un ancrage Strong, donc elle n'a que son propre corpus : la DBS en
+  /// lecture Darby ([VersionRepository.dbyCode]), la SES en lecture Septante
+  /// française ([VersionRepository.sefCode]), la LSGS en lecture Segond nue
+  /// ([VersionRepository.lsgCode]).
+  ///
+  /// Null en lecture BYM, où le sélecteur reste entier : **la BYM est la
+  /// seule version à disposer de tous les corpus.** Proposer les ancrages
+  /// d'une autre traduction serait mélanger les textes — et les substituer en
+  /// silence dévierait de la version lue sans que le choix de l'utilisateur
+  /// ait rien changé.
+  ///
+  /// N'a de sens pour la DBS et la SES qu'avec [dbsAvailable] /
+  /// [sesAvailable] : sans le livre téléchargé, le lecteur n'ouvre pas cet
+  /// écran mais invite vers la Bibliothèque.
+  final String? corpusExclusif;
 
   const EtudeVersetScreen({
     super.key,
@@ -171,12 +175,11 @@ class EtudeVersetScreen extends StatefulWidget {
     this.onOpenVerse,
     this.dictionaryStore,
     this.dbsAvailable = false,
-    this.dbsOnly = false,
     this.sesAvailable = false,
-    this.sefOnly = false,
-  }) : assert(!dbsOnly || dbsAvailable,
+    this.corpusExclusif,
+  }) : assert(corpusExclusif != VersionRepository.dbsCode || dbsAvailable,
             'un corpus Darby exclusif sans livre téléchargé ne servirait rien'),
-       assert(!sefOnly || sesAvailable,
+       assert(corpusExclusif != VersionRepository.sesCode || sesAvailable,
             'un corpus grec exclusif sans livre téléchargé ne servirait rien');
 
   @override
@@ -508,38 +511,43 @@ class _EtudeVersetScreenState extends State<EtudeVersetScreen> {
   /// Choix du corpus dont vient la fiche.
   ///
   /// La LSS de Biblia, qui numérote les particules que la LSGS ignore, et la
-  /// LSGS que lit le texte — plus la DBS (Darby + Strong) et la SES
-  /// (Septuaginta grec + Strong) quand leur livre est téléchargé. En lecture
-  /// Darby ([dbsOnly]), seule la DBS ; en lecture SEF ([sefOnly]), seule la
-  /// SES : la BYM reste la seule version à disposer de tous les corpus.
-  /// C'est [VersionRepository.tokensFor] qui les sert tous les quatre.
-  /// Proposer le catalogue entier serait trompeur — une version sans ancre
-  /// Strong retomberait en silence sur la LSGS, sans que le choix de
-  /// l'utilisateur ait rien changé.
+  /// LSGS — plus la DBS (Darby + Strong) et la SES (Septuaginta grec +
+  /// Strong) quand leur livre est téléchargé. C'est [VersionRepository.tokensFor]
+  /// qui les sert tous les quatre.
+  ///
+  /// [corpusExclusif] réduit la liste à **un** quand la version lue a déjà
+  /// son ancrage : DBS en Darby, SES en Septante, LSGS en Segond nue. Pas de
+  /// mélange entre traductions — seuls les ancrages du texte lu sont
+  /// proposés, la BYM seule ayant tous les corpus. Proposer le catalogue
+  /// entier serait trompeur : une version sans ancre Strong retomberait en
+  /// silence sur la LSGS, sans que le choix de l'utilisateur ait rien changé.
   Future<void> _pickCorpus() async {
     final p = premiumPalette(context);
+    final exclusif = widget.corpusExclusif;
     final options = [
-      if (!widget.dbsOnly && !widget.sefOnly)
+      if (exclusif == null)
         (
           code: VersionRepository.lssCode,
           name: 'LSS — Segond Louis + Strong',
           note: 'Ancre aussi les particules que la traduction ne rend pas '
               '(waw, article, préfixes) : c\'est le lexique le plus complet.',
         ),
-      if (!widget.dbsOnly && !widget.sefOnly)
+      if (exclusif == null || exclusif == VersionRepository.lsgsCode)
         (
           code: VersionRepository.lsgsCode,
           name: 'LSGS — Segond 1910 + Strongs',
           note: 'Le texte que vous lisez, ancre par ancre.',
         ),
-      if (widget.dbsAvailable && !widget.sefOnly)
+      if (widget.dbsAvailable &&
+          (exclusif == null || exclusif == VersionRepository.dbsCode))
         (
           code: VersionRepository.dbsCode,
           name: 'DBS — Darby + Strong',
           note: 'Les mots de la Darby, ancre par ancre : le taggage Biblia '
               'de la traduction que vous lisez.',
         ),
-      if (widget.sesAvailable && !widget.dbsOnly)
+      if (widget.sesAvailable &&
+          (exclusif == null || exclusif == VersionRepository.sesCode))
         (
           code: VersionRepository.sesCode,
           name: 'SES — Septuaginta grec + Strong',
