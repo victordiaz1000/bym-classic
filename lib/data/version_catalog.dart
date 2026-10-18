@@ -499,6 +499,37 @@ const List<VersionGroup> versionCatalog = [
           'https://raw.githubusercontent.com/victordiaz1000/-bym-bibles/main/ses/{book}.json',
     ),
     VersionEntry(
+      code: 'WLC',
+      name: 'WLC — Westminster Leningrad Codex (hébreu)',
+      // Le texte est en domaine public : le Westminster Leningrad Codex a été
+      // libéré par le Groves Center. La morphologie, elle, est signée
+      // CC BY 4.0 par le projet qui l'a produite — deux mentions distinctes,
+      // comme le font les deux lignes.
+      rights: 'Texte : domaine public · '
+          'Morphologie : © Open Scriptures Hebrew Bible Project, CC BY 4.0',
+      attribution: 'Open Scriptures Hebrew Bible Project — '
+          'd’après le Westminster Leningrad Codex (Groves Center)',
+      availability: VersionAvailability.downloadable,
+      // Hébergement GitHub identique à l'ATI, sous-dossier propre — produit
+      // par `WLC/wlc_to_json.py` depuis les fichiers OSIS d'openscriptures/
+      // morphhb. Quatrième interlinéaire de la Bibliothèque, et premier dont
+      // la source n'est pas Biblia Universalis : l'ATI est une autre édition
+      // du même hébreu, avec gloses françaises et translittération — la WLC
+      // n'a ni l'une ni l'autre, et ses mots passent par `h` plutôt que par
+      // `m`, ce qui les fait rendre de droite à gauche comme il se doit.
+      //
+      // Ancien Testament seul, et pour les mêmes raisons que l'ATI.
+      format: VersionFormat.ati,
+      otOnly: true,
+      languageCode: 'HE',
+      // `hasStrong` reste faux pour la même raison que sur l'ATI, le NTI et la
+      // SES : le drapeau décrit le texte aplati, où `bookFromAti` ne joint que
+      // des gloses françaises — il n'y en a aucune ici. Les numéros restent
+      // cliquables par le rendu interlinéaire, qui lit les mots.
+      urlTemplate:
+          'https://raw.githubusercontent.com/victordiaz1000/-bym-bibles/main/wlc/{book}.json',
+    ),
+    VersionEntry(
       code: 'KJV',
       name: 'King James Version (anglais)',
       rights: '1611 · Libre de droit',
