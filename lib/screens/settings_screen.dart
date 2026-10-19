@@ -21,12 +21,12 @@ import '../widgets/reading_preview.dart';
 import 'themes_screen.dart';
 
 /// Version de l'**application** telle que `pubspec.yaml` la déclare
-/// (`version: 1.0.2+3`), valeur de repli quand `package_info_plus` ne répond
+/// (`version: 1.0.3+4`), valeur de repli quand `package_info_plus` ne répond
 /// pas — la version affichée vient normalement du manifeste installé. À
 /// remonter à chaque bump de version : c'est la seule valeur écrite à la main.
 /// La version du **texte**, elle, se lit à l'exécution et n'a pas besoin d'être
 /// écrite ici.
-const String appVersion = '1.0.2';
+const String appVersion = '1.0.3';
 
 /// Réglages — destination de la coquille.
 ///

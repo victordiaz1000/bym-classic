@@ -576,7 +576,7 @@ const List<VersionGroup> versionCatalog = [
       // des gloses françaises — il n'y en a aucune ici. Les numéros restent
       // cliquables par le rendu interlinéaire, qui lit les mots.
       urlTemplate:
-          'http://127.0.0.1:8734/wlc/{book}.json',
+          'https://raw.githubusercontent.com/victordiaz1000/-bym-bibles/main/wlc/{book}.json',
     ),
     VersionEntry(
       code: 'IL',
@@ -608,7 +608,7 @@ const List<VersionGroup> versionCatalog = [
       // à part, plutôt que de le ranger sous l'une des deux langues.
       textLanguage: TextLanguage.mixed,
       urlTemplate:
-          'http://127.0.0.1:8734/il/{book}.json',
+          'https://raw.githubusercontent.com/victordiaz1000/-bym-bibles/main/il/{book}.json',
     ),
     VersionEntry(
       code: 'TR',
@@ -635,7 +635,7 @@ const List<VersionGroup> versionCatalog = [
       // 40 comme dans le NTI, la SES et les autres corpus de Nouveau
       // Testament.
       urlTemplate:
-          'http://127.0.0.1:8734/tr/{book}.json',
+          'https://raw.githubusercontent.com/victordiaz1000/-bym-bibles/main/tr/{book}.json',
     ),
     VersionEntry(
       code: 'KJV',
