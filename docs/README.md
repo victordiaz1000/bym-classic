@@ -27,14 +27,29 @@ Ce dossier est copié dans `docs/` du dépôt `victordiaz1000/bym-classic` :
 
 ## Publier une nouvelle version d'APK
 
-1. Construis l'APK : `flutter build apk --release` (dans le dépôt de l'app).
-2. Sur GitHub : **Releases → Create a new release** → tag `v1.1.0` →
-   attache le fichier renommé `bym-1.1.0.apk`.
-3. **Rien à changer dans `index.html`** : le bouton de téléchargement et le
-   changelog sont rafraîchis depuis l'API GitHub Releases à chaque visite.
-4. Si l'API est injoignable (hors ligne, quota), le repli statique du HTML
-   reprend la main — mets alors à jour le lien du bloc `#download` et les
-   blocs de versions de `#changelog`.
+1. Monte la version aux quatre endroits qui la portent : `pubspec.yaml`
+   (`version:`), la constante `appVersion` de
+   `lib/screens/settings_screen.dart`, le commentaire qui la décrit, et le
+   repli statique de `index.html` (JSON-LD, bouton du hero, blocs de
+   `#changelog`).
+2. Écris les notes dans `RELEASE_NOTES.md`. La première ligne, **sans
+   puce**, est celle que Réglages affiche sous « Version x.y.z » (120
+   signes au plus) ; les suivantes alimentent le changelog du site, qui en
+   prend huit. Sans cette étape, la release suivante reprend les notes de
+   celle-ci.
+3. Pousse, puis pousse le tag : `git tag v1.1.0 && git push origin v1.1.0`.
+   La workflow `release-apk.yml` construit, signe et publie la release
+   avec `bym-1.1.0.apk` et son `.sha256` — c'est ce couple que
+   l'application détecte par `releases/latest`.
+4. **Rien à changer au bouton ni à la frise** : le chargement dynamique
+   depuis l'API GitHub Releases les rafraîchit à chaque visite.
+5. Si l'API est injoignable (hors ligne, quota), le repli statique du HTML
+   reprend la main — c'est pourquoi l'étape 1 le met à jour aussi.
+
+Le tag doit être **supérieur** à l'installé, build compris : `AppVersion`
+compare `majeure.mineure.corrigée` puis le build, et un tag n'en porte pas
+(il vaut 0). Publier `v1.1.0` après un `1.1.0+4` ne se propose donc jamais
+— seul un numéro plus haut bascule.
 
 ## Personnaliser
 

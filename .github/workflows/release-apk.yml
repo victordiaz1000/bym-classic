@@ -118,9 +118,7 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.name }}
           name: BYM ${{ steps.tag.outputs.name }}
-          body: |
-            Version ${{ steps.tag.outputs.name }} de BYM — Bible de Yehoshoua Ha Mashiah.
-            Voir la page de présentation pour les nouveautés.
+          body_path: docs/RELEASE_NOTES.md
           files: |
             ${{ env.ASSET }}
             ${{ env.CHECKSUM }}
