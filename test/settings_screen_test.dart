@@ -7,6 +7,7 @@ import 'package:bible_app/data/bym_update_service.dart';
 import 'package:bible_app/data/version_repository.dart';
 import 'package:bible_app/screens/settings_screen.dart';
 import 'package:bible_app/widgets/fiche_text_settings.dart';
+import 'package:bible_app/widgets/reading_preview.dart';
 
 /// The settings screen edits the persisted [AppPreferences] the reader reads:
 /// a setting changed here must survive a reload, and controls that answer
@@ -53,6 +54,53 @@ void main() {
 
     await scrollTo(tester, find.text('DONNÉES'));
     await scrollTo(tester, find.text('À PROPOS'));
+  });
+
+  testWidgets('l’aperçu épinglé reste à l’écran pendant que la liste défile', (
+    tester,
+  ) async {
+    // La carte LECTURE fait trois écrans de haut : ses derniers réglages —
+    // police, couleur du texte, opacité, notes — se réglaient à l'aveugle,
+    // l'aperçu ayant défilé avec elle. Il vit maintenant hors de la liste ;
+    // reste à vérifier qu'il y reste quand on descend jusqu'aux DONNÉES, et
+    // sur un vrai téléphone (412 × 732) : à 3 000 px de haut rien ne défile.
+    tester.view.physicalSize = const Size(412, 732);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
+    await tester.pumpAndSettle();
+
+    final apercu = find.byType(ReadingPreview);
+    expect(apercu, findsOneWidget);
+    final pose = tester.getRect(apercu);
+    // La carte de l'aperçu est une carte comme les autres, à la même
+    // gouttière : elle partage ses bords avec la pastille LECTURE, et la
+    // liste commence sous elle — jamais dessous.
+    final carte = tester.getRect(
+      find.ancestor(of: apercu, matching: find.byType(Ink)).first,
+    );
+    final pastille = tester.getRect(
+      find.ancestor(of: find.text('LECTURE'), matching: find.byType(Row)).first,
+    );
+    expect(carte.left, pastille.left, reason: 'même gouttière que la liste');
+    expect(carte.right, pastille.right);
+    expect(carte.top, lessThan(pastille.top), reason: 'l’aperçu ouvre l’écran');
+    expect(pastille.top - carte.bottom, inInclusiveRange(12, 28));
+    expect(
+      carte.bottom,
+      lessThanOrEqualTo(732),
+      reason: 'la carte tient à l’écran, entière',
+    );
+
+    await scrollTo(tester, find.text('Vider le cache'));
+
+    expect(
+      tester.getRect(apercu),
+      pose,
+      reason: 'même rect après défilement : il est hors de la liste',
+    );
+    // Et le défilement a bien eu lieu, sans quoi le test ne prouverait rien.
+    expect(find.text('LECTURE'), findsNothing);
   });
 
   /// The switch of the row titled [title], found through its own row rather

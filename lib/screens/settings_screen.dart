@@ -17,6 +17,7 @@ import '../data/version_repository.dart';
 import '../widgets/fiche_text_settings.dart';
 import '../widgets/loading_skeleton.dart';
 import '../widgets/premium_style.dart';
+import '../widgets/reading_preview.dart';
 import 'themes_screen.dart';
 
 /// Version de l'**application** telle que `pubspec.yaml` la déclare
@@ -945,361 +946,385 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 itemCount: 8,
                 padding: EdgeInsets.fromLTRB(20, 8, 20, 24),
               )
-            : ListView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            : Column(
                 children: [
-                  _SectionBadge('LECTURE'),
-                  const SizedBox(height: 10),
-                  _SettingsCard(
-                    children: [
-                      _SettingsRow(
-                        icon: Icons.menu_book_outlined,
-                        title: 'Version par défaut',
-                        subtitle: _versionLabel(_p.versionCode),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: _pickDefaultVersion,
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.format_size,
-                        title: 'Taille du texte',
-                        // Pas de sous-ligne : le curseur porte son propre
-                        // affichage, imprimer « 100 % » deux fois dans la
-                        // même rangée est du bruit — le choix écrit en
-                        // face, à côté de l'Opacité du panneau.
-                        below: ReadingSizeSlider(
-                          fontSize: _p.fontSize,
-                          base: ReadingTextSize.extraLarge.fontSize,
-                          onChanged: (value) {
-                            setState(() => _p.fontSize = value);
-                          },
-                          // Écrit au relâcher, comme l'opacité : glisser ne
-                          // doit pas marteler les préférences.
-                          onChangeEnd: (value) {
-                            setState(() => _p.fontSize = value);
-                            _save();
-                          },
-                        ),
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.segment,
-                        title: 'Disposition du texte',
-                        // Affichage, jamais la préférence : sur l'ATI le lecteur
-                        // est sur « Séparés », et « Continu » attend une version
-                        // qui sache s'en servir.
-                        subtitle: _interlinear
-                            ? ReadingLayout.tiles.label
-                            : _p.layout.label,
-                        // Below, not trailing: the `trailing` slot is not
-                        // bounded, and a bar of segments would swallow the
-                        // title whole on a 320-px phone.
-                        below: ReadingOptionBar<ReadingLayout>(
-                          options: ReadingLayout.values,
-                          // La barre n'a pas la place pour « Versets séparés »
-                          // à l'échelle système maximale : le segment
-                          // raccourcit, la version complète reste au survol.
-                          labelOf: (option) => option == ReadingLayout.tiles
-                              ? 'Séparés'
-                              : 'Continu',
-                          tooltipOf: (option) =>
-                              option == ReadingLayout.paragraph && _interlinear
-                              // Ni « ATI » ni « NTI » : le texte continu est
-                              // refusé aux deux, pour la même raison.
-                              ? 'Indisponible avec un interlinéaire'
-                              : option.label,
-                          selected: _interlinear
-                              ? ReadingLayout.tiles
-                              : _p.layout,
-                          enabledOf: (option) =>
-                              !_interlinear ||
-                              option != ReadingLayout.paragraph,
-                          onChanged: (value) {
-                            setState(() => _p.layout = value);
-                            _save();
-                          },
-                        ),
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.format_bold,
-                        title: 'Graisse du texte',
-                        subtitle: _p.fontWeight.label,
-                        below: ReadingOptionBar<ReadingFontWeight>(
-                          options: ReadingFontWeight.values,
-                          labelOf: (option) => option.label,
-                          selected: _p.fontWeight,
-                          onChanged: (value) {
-                            setState(() => _p.fontWeight = value);
-                            _save();
-                          },
-                        ),
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.format_line_spacing,
-                        title: 'Aération du texte',
-                        subtitle: _p.spacing.label,
-                        below: ReadingOptionBar<ReadingSpacing>(
-                          options: ReadingSpacing.values,
-                          labelOf: (option) => option.label,
-                          selected: _p.spacing,
-                          onChanged: (value) {
-                            setState(() => _p.spacing = value);
-                            _save();
-                          },
-                        ),
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.format_align_justify,
-                        title: 'Alignement',
-                        // Below, not trailing: four icon buttons are 192 px, and
-                        // the trailing slot is narrower than that on a small
-                        // phone.
-                        below: ReadingAlignChips(
-                          align: _p.textAlign,
-                          onChanged: (align) {
-                            setState(() => _p.textAlign = align);
-                            _save();
-                          },
-                        ),
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.space_bar,
-                        title: 'Marges latérales',
-                        // Pas de sous-ligne : le curseur porte son propre
-                        // affichage en px, comme la taille et l'opacité.
-                        below: ReadingPaddingSlider(
-                          value: _p.sidePadding,
-                          onChanged: (value) {
-                            setState(() => _p.sidePadding = value);
-                          },
-                          // Écrit au relâcher, comme l'opacité : glisser ne
-                          // doit pas marteler les préférences.
-                          onChangeEnd: (value) {
-                            setState(() => _p.sidePadding = value);
-                            _save();
-                          },
-                        ),
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.font_download_outlined,
-                        title: 'Police de lecture',
-                        subtitle: _p.readingFont.label,
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: _pickReadingFont,
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.format_color_text,
-                        title: 'Couleur du texte',
-                        subtitle: _p.textColorOverride == null
-                            ? 'Suivre le thème'
-                            : 'Personnalisée',
-                        below: ReadingTextColorSwatches(
-                          selectedArgb: _p.textColorOverride,
-                          onChanged: (value) {
-                            setState(
-                              () => _p.textColorOverride = value?.toString(),
-                            );
-                            _save();
-                          },
-                        ),
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.texture,
-                        title: 'Opacité du panneau',
-                        // No subtitle: the slider carries its own readout, and
-                        // printing « 80 % » twice in one row is noise.
-                        below: ReadingOpacitySlider(
-                          value: _p.panelOpacity,
-                          onChanged: (value) {
-                            setState(() => _p.panelOpacity = value);
-                          },
-                          // Persisted on release: rebuilding the reader and
-                          // writing on every tick would hammer the
-                          // preferences a dozen times per gesture.
-                          onChangeEnd: (value) {
-                            setState(() => _p.panelOpacity = value);
-                            _save();
-                          },
-                        ),
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.note_alt_outlined,
-                        title: 'Notes',
-                        // The switch is never disabled: the preference is global
-                        // and applies whenever a BYM-format version is read. But
-                        // while the active version carries no notes, saying so is
-                        // better than offering a control with no visible effect.
-                        subtitle: _carriesNotes
-                            ? (_p.notesMode ? 'Texte + notes' : 'Texte seul')
-                            : 'Texte seul — notes du texte BYM',
-                        trailing: Switch(
-                          value: _p.notesMode,
-                          onChanged: (value) {
-                            setState(() => _p.notesMode = value);
-                            _save();
-                          },
-                        ),
-                      ),
-                      if (_p.notesMode) ...[
-                        _Divider(),
-                        _SettingsRow(
-                          icon: Icons.view_headline,
-                          title: 'Disposition des notes',
-                          // The continuous flow weaves the notes into the
-                          // sentence, so « sous le verset » does not apply there.
-                          // The chip stays **visible but disabled** rather than
-                          // hidden: hiding it would let the row look like a
-                          // two-way choice that had lost an option, and a
-                          // disabled chip cannot be tapped into overwriting a
-                          // preference the reader wants back in the tiles layout.
-                          subtitle: _belowAvailable
-                              ? null
-                              : 'Le texte continu montre les notes à la suite',
-                          // Below, comme les quatre autres sélecteurs de cette
-                          // carte : dans le `trailing`, la barre pousserait le
-                          // titre hors de la rangée.
-                          below: _DispositionPicker(
-                            current: _p.disposition,
-                            belowAvailable: _belowAvailable,
-                            onChanged: (value) {
-                              setState(() => _p.disposition = value);
-                              _save();
-                            },
-                          ),
+                  // L'aperçu **hors de la liste** : il ne défile pas. Les
+                  // réglages qui le changent s'étalent sur trois écrans —
+                  // « Police », « Couleur du texte », « Opacité » et
+                  // « Notes » vivent tout en bas de la carte : on réglait
+                  // à l'aveugle. Épinglé ici, il répond à chaque geste,
+                  // d'où qu'il vienne — et le thème choisi dans APPARENCE
+                  // se voit dessus.
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 10),
+                    child: _SettingsCard(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
+                          child: ReadingPreview(prefs: _p),
                         ),
                       ],
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 18),
-                  _SectionBadge('APPARENCE'),
-                  const SizedBox(height: 10),
-                  _SettingsCard(
-                    children: [
-                      // Pas de ligne « Mode immersion » ici : c'est une action
-                      // de lecture, et la feuille ⋯ du lecteur la porte déjà —
-                      // avec sa sortie, qu'elle referme en s'activant. Une
-                      // préférence, une adresse.
-                      _SettingsRow(
-                        icon: Icons.palette_outlined,
-                        title: 'Thème de lecture',
-                        subtitle: themeById(_p.themeId).name,
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () async {
-                          await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const ThemesScreen(),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.fromLTRB(20, 6, 20, 24),
+                      children: [
+                        _SectionBadge('LECTURE'),
+                        const SizedBox(height: 10),
+                        _SettingsCard(
+                          children: [
+                            _SettingsRow(
+                              icon: Icons.menu_book_outlined,
+                              title: 'Version par défaut',
+                              subtitle: _versionLabel(_p.versionCode),
+                              trailing: const Icon(Icons.chevron_right),
+                              onTap: _pickDefaultVersion,
                             ),
-                          );
-                          if (mounted) await _load();
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
-                  _SectionBadge('DONNÉES'),
-                  const SizedBox(height: 10),
-                  _SettingsCard(
-                    children: [
-                      if (_installed.isNotEmpty) ...[
-                        _SettingsRow(
-                          icon: Icons.storage_outlined,
-                          title: 'Versions téléchargées',
-                          subtitle:
-                              '${_formatBytes(_sizes['_total'] ?? 0)} '
-                              'sur l’appareil',
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.format_size,
+                              title: 'Taille du texte',
+                              // Pas de sous-ligne : le curseur porte son propre
+                              // affichage, imprimer « 100 % » deux fois dans la
+                              // même rangée est du bruit — le choix écrit en
+                              // face, à côté de l'Opacité du panneau.
+                              below: ReadingSizeSlider(
+                                fontSize: _p.fontSize,
+                                base: ReadingTextSize.extraLarge.fontSize,
+                                onChanged: (value) {
+                                  setState(() => _p.fontSize = value);
+                                },
+                                // Écrit au relâcher, comme l'opacité : glisser ne
+                                // doit pas marteler les préférences.
+                                onChangeEnd: (value) {
+                                  setState(() => _p.fontSize = value);
+                                  _save();
+                                },
+                              ),
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.segment,
+                              title: 'Disposition du texte',
+                              // Affichage, jamais la préférence : sur l'ATI le lecteur
+                              // est sur « Séparés », et « Continu » attend une version
+                              // qui sache s'en servir.
+                              subtitle: _interlinear
+                                  ? ReadingLayout.tiles.label
+                                  : _p.layout.label,
+                              // Below, not trailing: the `trailing` slot is not
+                              // bounded, and a bar of segments would swallow the
+                              // title whole on a 320-px phone.
+                              below: ReadingOptionBar<ReadingLayout>(
+                                options: ReadingLayout.values,
+                                // La barre n'a pas la place pour « Versets séparés »
+                                // à l'échelle système maximale : le segment
+                                // raccourcit, la version complète reste au survol.
+                                labelOf: (option) => option == ReadingLayout.tiles
+                                    ? 'Séparés'
+                                    : 'Continu',
+                                tooltipOf: (option) =>
+                                    option == ReadingLayout.paragraph && _interlinear
+                                    // Ni « ATI » ni « NTI » : le texte continu est
+                                    // refusé aux deux, pour la même raison.
+                                    ? 'Indisponible avec un interlinéaire'
+                                    : option.label,
+                                selected: _interlinear
+                                    ? ReadingLayout.tiles
+                                    : _p.layout,
+                                enabledOf: (option) =>
+                                    !_interlinear ||
+                                    option != ReadingLayout.paragraph,
+                                onChanged: (value) {
+                                  setState(() => _p.layout = value);
+                                  _save();
+                                },
+                              ),
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.format_bold,
+                              title: 'Graisse du texte',
+                              subtitle: _p.fontWeight.label,
+                              below: ReadingOptionBar<ReadingFontWeight>(
+                                options: ReadingFontWeight.values,
+                                labelOf: (option) => option.label,
+                                selected: _p.fontWeight,
+                                onChanged: (value) {
+                                  setState(() => _p.fontWeight = value);
+                                  _save();
+                                },
+                              ),
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.format_line_spacing,
+                              title: 'Aération du texte',
+                              subtitle: _p.spacing.label,
+                              below: ReadingOptionBar<ReadingSpacing>(
+                                options: ReadingSpacing.values,
+                                labelOf: (option) => option.label,
+                                selected: _p.spacing,
+                                onChanged: (value) {
+                                  setState(() => _p.spacing = value);
+                                  _save();
+                                },
+                              ),
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.format_align_justify,
+                              title: 'Alignement',
+                              // Below, not trailing: four icon buttons are 192 px, and
+                              // the trailing slot is narrower than that on a small
+                              // phone.
+                              below: ReadingAlignChips(
+                                align: _p.textAlign,
+                                onChanged: (align) {
+                                  setState(() => _p.textAlign = align);
+                                  _save();
+                                },
+                              ),
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.space_bar,
+                              title: 'Marges latérales',
+                              // Pas de sous-ligne : le curseur porte son propre
+                              // affichage en px, comme la taille et l'opacité.
+                              below: ReadingPaddingSlider(
+                                value: _p.sidePadding,
+                                onChanged: (value) {
+                                  setState(() => _p.sidePadding = value);
+                                },
+                                // Écrit au relâcher, comme l'opacité : glisser ne
+                                // doit pas marteler les préférences.
+                                onChangeEnd: (value) {
+                                  setState(() => _p.sidePadding = value);
+                                  _save();
+                                },
+                              ),
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.font_download_outlined,
+                              title: 'Police de lecture',
+                              subtitle: _p.readingFont.label,
+                              trailing: const Icon(Icons.chevron_right),
+                              onTap: _pickReadingFont,
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.format_color_text,
+                              title: 'Couleur du texte',
+                              subtitle: _p.textColorOverride == null
+                                  ? 'Suivre le thème'
+                                  : 'Personnalisée',
+                              below: ReadingTextColorSwatches(
+                                selectedArgb: _p.textColorOverride,
+                                onChanged: (value) {
+                                  setState(
+                                    () => _p.textColorOverride = value?.toString(),
+                                  );
+                                  _save();
+                                },
+                              ),
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.texture,
+                              title: 'Opacité du panneau',
+                              // No subtitle: the slider carries its own readout, and
+                              // printing « 80 % » twice in one row is noise.
+                              below: ReadingOpacitySlider(
+                                value: _p.panelOpacity,
+                                onChanged: (value) {
+                                  setState(() => _p.panelOpacity = value);
+                                },
+                                // Persisted on release: rebuilding the reader and
+                                // writing on every tick would hammer the
+                                // preferences a dozen times per gesture.
+                                onChangeEnd: (value) {
+                                  setState(() => _p.panelOpacity = value);
+                                  _save();
+                                },
+                              ),
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.note_alt_outlined,
+                              title: 'Notes',
+                              // The switch is never disabled: the preference is global
+                              // and applies whenever a BYM-format version is read. But
+                              // while the active version carries no notes, saying so is
+                              // better than offering a control with no visible effect.
+                              subtitle: _carriesNotes
+                                  ? (_p.notesMode ? 'Texte + notes' : 'Texte seul')
+                                  : 'Texte seul — notes du texte BYM',
+                              trailing: Switch(
+                                value: _p.notesMode,
+                                onChanged: (value) {
+                                  setState(() => _p.notesMode = value);
+                                  _save();
+                                },
+                              ),
+                            ),
+                            if (_p.notesMode) ...[
+                              _Divider(),
+                              _SettingsRow(
+                                icon: Icons.view_headline,
+                                title: 'Disposition des notes',
+                                // The continuous flow weaves the notes into the
+                                // sentence, so « sous le verset » does not apply there.
+                                // The chip stays **visible but disabled** rather than
+                                // hidden: hiding it would let the row look like a
+                                // two-way choice that had lost an option, and a
+                                // disabled chip cannot be tapped into overwriting a
+                                // preference the reader wants back in the tiles layout.
+                                subtitle: _belowAvailable
+                                    ? null
+                                    : 'Le texte continu montre les notes à la suite',
+                                // Below, comme les quatre autres sélecteurs de cette
+                                // carte : dans le `trailing`, la barre pousserait le
+                                // titre hors de la rangée.
+                                below: _DispositionPicker(
+                                  current: _p.disposition,
+                                  belowAvailable: _belowAvailable,
+                                  onChanged: (value) {
+                                    setState(() => _p.disposition = value);
+                                    _save();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
-                        _Divider(),
-                        for (final entry in _installed.entries) ...[
-                          _SettingsRow(
-                            icon: Icons.folder_outlined,
-                            title: versionByCode(entry.key)?.name ?? entry.key,
-                            // Le dénominateur est le canon de la version, pas
-                            // les 66 : l'ATI s'arrête à 39, le NTI à 27.
-                            subtitle:
-                                '${entry.value.bookCount}/'
-                                '${versionByCode(entry.key)?.bookCount ?? 66} '
-                                'livres · '
-                                '${_formatBytes(_sizes[entry.key] ?? 0)}',
-                          ),
-                          if (entry.key != _installed.keys.last) _Divider(),
-                        ],
-                      ],
-                      if (_installed.isEmpty) ...[
-                        _SettingsRow(
-                          icon: Icons.storage_outlined,
-                          title: 'Versions téléchargées',
-                          subtitle: 'Aucune — tout est embarqué',
+                        const SizedBox(height: 18),
+                        _SectionBadge('APPARENCE'),
+                        const SizedBox(height: 10),
+                        _SettingsCard(
+                          children: [
+                            // Pas de ligne « Mode immersion » ici : c'est une action
+                            // de lecture, et la feuille ⋯ du lecteur la porte déjà —
+                            // avec sa sortie, qu'elle referme en s'activant. Une
+                            // préférence, une adresse.
+                            _SettingsRow(
+                              icon: Icons.palette_outlined,
+                              title: 'Thème de lecture',
+                              subtitle: themeById(_p.themeId).name,
+                              trailing: const Icon(Icons.chevron_right),
+                              onTap: () async {
+                                await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const ThemesScreen(),
+                                  ),
+                                );
+                                if (mounted) await _load();
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 18),
+                        _SectionBadge('DONNÉES'),
+                        const SizedBox(height: 10),
+                        _SettingsCard(
+                          children: [
+                            if (_installed.isNotEmpty) ...[
+                              _SettingsRow(
+                                icon: Icons.storage_outlined,
+                                title: 'Versions téléchargées',
+                                subtitle:
+                                    '${_formatBytes(_sizes['_total'] ?? 0)} '
+                                    'sur l’appareil',
+                              ),
+                              _Divider(),
+                              for (final entry in _installed.entries) ...[
+                                _SettingsRow(
+                                  icon: Icons.folder_outlined,
+                                  title: versionByCode(entry.key)?.name ?? entry.key,
+                                  // Le dénominateur est le canon de la version, pas
+                                  // les 66 : l'ATI s'arrête à 39, le NTI à 27.
+                                  subtitle:
+                                      '${entry.value.bookCount}/'
+                                      '${versionByCode(entry.key)?.bookCount ?? 66} '
+                                      'livres · '
+                                      '${_formatBytes(_sizes[entry.key] ?? 0)}',
+                                ),
+                                if (entry.key != _installed.keys.last) _Divider(),
+                              ],
+                            ],
+                            if (_installed.isEmpty) ...[
+                              _SettingsRow(
+                                icon: Icons.storage_outlined,
+                                title: 'Versions téléchargées',
+                                subtitle: 'Aucune — tout est embarqué',
+                              ),
+                            ],
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.cleaning_services_outlined,
+                              title: 'Vider le cache',
+                              subtitle: 'Relit les textes depuis le disque',
+                              onTap: _clearCache,
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.history,
+                              title: 'Effacer l’historique',
+                              subtitle: 'Chapitres récemment ouverts',
+                              onTap: _clearHistory,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 18),
+                        _SectionBadge('MISE À JOUR DU TEXTE'),
+                        const SizedBox(height: 10),
+                        _updateSection(),
+                        const SizedBox(height: 18),
+                        _SectionBadge('MISE À JOUR DE L’APPLICATION'),
+                        const SizedBox(height: 10),
+                        _appUpdateSection(),
+                        const SizedBox(height: 18),
+                        _SectionBadge('À PROPOS'),
+                        const SizedBox(height: 10),
+                        _SettingsCard(
+                          children: [
+                            _SettingsRow(
+                              icon: Icons.menu_book,
+                              title: appName,
+                              // Version de l'application, pas du texte : les deux
+                              // évoluent séparément, et c'est tout l'intérêt du
+                              // système de mise à jour. La section ci-dessus dit la
+                              // version du texte.
+                              subtitle: 'Application $_appVersion',
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.translate,
+                              title: 'Textes embarqués',
+                              subtitle:
+                                  'BYM · Segond 1910 + Strongs (LSGS) · '
+                                  'Segond Louis + Strongs (LSS)',
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.import_contacts_outlined,
+                              title: 'Dictionnaires & lexiques',
+                              subtitle:
+                                  'Westphal 1932 · Strong français '
+                                  '(CrossWire/SWORD)',
+                            ),
+                            _Divider(),
+                            _SettingsRow(
+                              icon: Icons.cloud_outlined,
+                              title: 'Versions téléchargeables',
+                              subtitle: 'getbible.net · catalogue configurable',
+                            ),
+                          ],
                         ),
                       ],
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.cleaning_services_outlined,
-                        title: 'Vider le cache',
-                        subtitle: 'Relit les textes depuis le disque',
-                        onTap: _clearCache,
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.history,
-                        title: 'Effacer l’historique',
-                        subtitle: 'Chapitres récemment ouverts',
-                        onTap: _clearHistory,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
-                  _SectionBadge('MISE À JOUR DU TEXTE'),
-                  const SizedBox(height: 10),
-                  _updateSection(),
-                  const SizedBox(height: 18),
-                  _SectionBadge('MISE À JOUR DE L’APPLICATION'),
-                  const SizedBox(height: 10),
-                  _appUpdateSection(),
-                  const SizedBox(height: 18),
-                  _SectionBadge('À PROPOS'),
-                  const SizedBox(height: 10),
-                  _SettingsCard(
-                    children: [
-                      _SettingsRow(
-                        icon: Icons.menu_book,
-                        title: appName,
-                        // Version de l'application, pas du texte : les deux
-                        // évoluent séparément, et c'est tout l'intérêt du
-                        // système de mise à jour. La section ci-dessus dit la
-                        // version du texte.
-                        subtitle: 'Application $_appVersion',
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.translate,
-                        title: 'Textes embarqués',
-                        subtitle:
-                            'BYM · Segond 1910 + Strongs (LSGS) · '
-                            'Segond Louis + Strongs (LSS)',
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.import_contacts_outlined,
-                        title: 'Dictionnaires & lexiques',
-                        subtitle:
-                            'Westphal 1932 · Strong français '
-                            '(CrossWire/SWORD)',
-                      ),
-                      _Divider(),
-                      _SettingsRow(
-                        icon: Icons.cloud_outlined,
-                        title: 'Versions téléchargeables',
-                        subtitle: 'getbible.net · catalogue configurable',
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
