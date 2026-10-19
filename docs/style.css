@@ -425,15 +425,6 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .releases-live-note { margin-top: 2.2rem; font-size: .8rem; color: var(--muted); }
 .releases-live-note a { color: var(--accent); border-bottom: 1px solid var(--line-gold); }
 .releases-live-note a:hover { text-decoration: none; }
-.downloads-total {
-  margin-top: 1.6rem; font-size: .82rem; color: var(--muted);
-  letter-spacing: .02em;
-}
-.downloads-total strong {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 600; font-size: 1.15rem; color: var(--ink);
-  margin-right: .2rem;
-}
 
 /* ===== Contact ===== */
 .contact-card {

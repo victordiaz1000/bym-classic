@@ -219,21 +219,6 @@
       .then((releases) => {
         if (!Array.isArray(releases) || !releases.length) return;
 
-        // Nombre de téléchargements réels : somme des assets APK de
-        // toutes les releases. GitHub fournit ce compteur gratuitement
-        // (c'est le nombre de téléchargements effectifs, pas un
-        // estimateur) — aucune donnée n'est envoyée nulle part.
-        const totalDl = releases
-          .flatMap((rel) => rel.assets || [])
-          .filter((asset) => /\.apk$/i.test(asset.name || ''))
-          .reduce((sum, asset) => sum + (asset.download_count || 0), 0);
-        if (totalDl > 0) {
-          const num = document.getElementById('downloads-count');
-          const box = document.getElementById('downloads-total');
-          if (num) num.textContent = totalDl.toLocaleString('fr-FR');
-          if (box) { box.hidden = false; box.classList.add('in'); }
-        }
-
         // Seules les 6 dernières versions sont affichées.
         const blocks = releases.slice(0, 6).map(buildRelease).filter(Boolean);
         if (!blocks.length) return;
