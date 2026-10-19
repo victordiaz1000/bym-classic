@@ -669,9 +669,10 @@ class _NumberTile extends StatelessWidget {
 // « Version » sheet
 // ---------------------------------------------------------------------------
 
-/// Translations grouped as in the maquette
-/// (`modif/resultat_vers_les_versions.jpg`): a code line, the name, then the
-/// date + licence — but only the ones this device can read: the embedded
+/// Translations grouped by the language of their text — Français · Hébreu ·
+/// Grec · Hébreu & grec · Anglais — with, under each heading, the maquette's
+/// row (`modif/resultat_vers_les_versions.jpg`): a code line, the name, then
+/// the date + licence; but only the ones this device can read: the embedded
 /// BYM / LSGS / LSS, and what the Bibliothèque has downloaded.
 ///
 /// The rest of the catalogue used to sit here too, greyed, answering « à
@@ -696,12 +697,24 @@ Future<void> showVersionSheet(
   bool readable(VersionEntry version) =>
       version.embedded || installed[version.code]?.isEmpty == false;
 
-  /// The catalogue reduced to what can be opened, groups included: a heading
-  /// with nothing under it reads as a broken list.
+  /// The catalogue reduced to what can be opened, grouped by the language of
+  /// the text — the same classification as the Bibliothèque (Français ·
+  /// Hébreu · Grec · Anglais), so both surfaces name a version the same way.
+  /// A heading with nothing under it reads as a broken list, so a language
+  /// nothing readable lives in takes no section.
+  final readableVersions = versionCatalog
+      .expand((group) => group.versions)
+      .where(readable)
+      .toList();
   final groups = [
-    for (final group in versionCatalog)
-      if (group.versions.any(readable))
-        (title: group.title, versions: group.versions.where(readable).toList()),
+    for (final language in TextLanguage.values)
+      if (readableVersions.any((v) => v.textLanguage == language))
+        (
+          title: language.label,
+          versions: readableVersions
+              .where((v) => v.textLanguage == language)
+              .toList(),
+        ),
   ];
 
   /// How many the Bibliothèque still has to offer — the footer says it rather

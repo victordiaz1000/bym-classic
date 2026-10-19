@@ -105,6 +105,15 @@ class VersionEntry {
   /// servables aujourd'hui sont françaises sauf la KJV.
   final String languageCode;
 
+  /// Langue du texte porté par la version — ce qui classe ses cartes dans la
+  /// Bibliothèque sous « Français », « Hébreu », « Grec » ou « Anglais ».
+  /// Défaut [TextLanguage.french].
+  ///
+  /// Ce n'est pas [languageCode] : les interlinéaires (ATI, NTI), la SES et
+  /// la SEF affichent du français mais portent un texte hébreu ou grec, et
+  /// c'est ce texte-là qui les range. La WLC, elle, est hébreu des deux côtés.
+  final TextLanguage textLanguage;
+
   /// Whether the version only carries the Old Testament (BYM indexes 1..39).
   ///
   /// SEF is the Septuagint: its canon ends at Malachie, Matthieu does not
@@ -133,6 +142,7 @@ class VersionEntry {
     this.urlTemplate,
     this.hasStrong = false,
     this.languageCode = 'FR',
+    this.textLanguage = TextLanguage.french,
     this.otOnly = false,
     this.ntOnly = false,
   }) : assert(!(otOnly && ntOnly),
@@ -207,6 +217,33 @@ class VersionGroup {
   final List<VersionEntry> versions;
 
   const VersionGroup(this.title, this.versions);
+}
+
+/// La langue du texte lui-même — l'axe de classement de la Bibliothèque,
+/// où chaque langue prend son intertitre (Français · Hébreu · Grec ·
+/// Anglais), l'ordre étant celui des valeurs de l'énumération.
+///
+/// C'est ce qui distingue [VersionEntry.textLanguage] de
+/// [VersionEntry.languageCode] : l'ATI est un interlinéaire **hébreu** dont
+/// les gloses sont françaises — son `languageCode` reste 'FR' (c'est le
+/// français qu'on lit sous chaque mot), mais on le range sous Hébreu, avec
+/// la WLC. Même chose pour le NTI et la SES/SEF sous Grec.
+enum TextLanguage {
+  french('Français'),
+  hebrew('Hébreu'),
+  greek('Grec'),
+
+  /// L'interlinéaire complet IL : hébreu pointillé pour l'Ancien Testament,
+  /// grec accentué pour le Nouveau — un corpus qui n'est d'aucune des deux
+  /// langues seules, et qu'un intertitre unique décrirait mal.
+  mixed('Hébreu & grec'),
+  english('Anglais');
+
+  /// L'intertitre tel qu'il s'affiche, en tête de section dans l'onglet
+  /// Bibles de la Bibliothèque.
+  final String label;
+
+  const TextLanguage(this.label);
 }
 
 /// Versions grouped as in the maquette (`modif/resultat_vers_les_versions.jpg`).
@@ -332,6 +369,10 @@ const List<VersionGroup> versionCatalog = [
       // sur 39 et évite d'offrir le téléchargement d'un Matthieu inexistant.
       format: VersionFormat.ati,
       otOnly: true,
+      // Le texte est hébreu, les gloses françaises : rangé sous « Hébreu »
+      // dans la Bibliothèque (textLanguage), même si la carte affiche du
+      // français (languageCode reste 'FR').
+      textLanguage: TextLanguage.hebrew,
       // `hasStrong` reste faux, bien que le corpus porte un numéro Strong par
       // mot : le drapeau ne décrit pas le corpus mais le **texte aplati**, où
       // `verse_tile` va chercher des codes insérés dans la chaîne à la façon de
@@ -361,6 +402,8 @@ const List<VersionGroup> versionCatalog = [
       // miroir exact de `otOnly` sur l'ATI.
       format: VersionFormat.ati,
       ntOnly: true,
+      // Le texte est grec, les gloses françaises : rangé sous « Grec ».
+      textLanguage: TextLanguage.greek,
       // `hasStrong` reste faux pour la même raison que sur l'ATI (voir plus
       // haut) : le drapeau décrit le texte aplati, où `bookFromAti` ne joint
       // que les gloses françaises.
@@ -472,6 +515,9 @@ const List<VersionGroup> versionCatalog = [
       // livres) : la Septante n'a pas de Nouveau Testament.
       format: VersionFormat.sef,
       otOnly: true,
+      // Grec de Rahlfs en tête de verset, français dessous : c'est le grec
+      // qui la range sous « Grec » dans la Bibliothèque.
+      textLanguage: TextLanguage.greek,
       urlTemplate:
           'https://raw.githubusercontent.com/victordiaz1000/-bym-bibles/main/sef/{book}.json',
     ),
@@ -495,6 +541,8 @@ const List<VersionGroup> versionCatalog = [
       // par le rendu interlinéaire, qui lit les mots, pas la chaîne.
       format: VersionFormat.ati,
       otOnly: true,
+      // Grec pur, sans un mot de français : rangé sous « Grec ».
+      textLanguage: TextLanguage.greek,
       urlTemplate:
           'https://raw.githubusercontent.com/victordiaz1000/-bym-bibles/main/ses/{book}.json',
     ),
@@ -522,12 +570,72 @@ const List<VersionGroup> versionCatalog = [
       format: VersionFormat.ati,
       otOnly: true,
       languageCode: 'HE',
+      textLanguage: TextLanguage.hebrew,
       // `hasStrong` reste faux pour la même raison que sur l'ATI, le NTI et la
       // SES : le drapeau décrit le texte aplati, où `bookFromAti` ne joint que
       // des gloses françaises — il n'y en a aucune ici. Les numéros restent
       // cliquables par le rendu interlinéaire, qui lit les mots.
       urlTemplate:
-          'https://raw.githubusercontent.com/victordiaz1000/-bym-bibles/main/wlc/{book}.json',
+          'http://127.0.0.1:8734/wlc/{book}.json',
+    ),
+    VersionEntry(
+      code: 'IL',
+      name: 'Bible Interlinéaire complète (AT + NT)',
+      // Le corpus est en domaine public (kjvstudy.org, data/interlinear.json.gz)
+      // : la mention porte l'adresse d'origine, pas un auteur qu'il n'y a pas.
+      //
+      // Deux langues dans un même corpus — l'hébreu pointillé de l'Ancien
+      // Testament, le grec accentué du Nouveau — et **les gloses sont en
+      // anglais** : le français de ce kit n'existe qu'à côté, dans un PDF de
+      // 137 Mo qui n'est pas téléchargeable mot à mot. On ne le traduit pas :
+      // `languageCode` porte la langue des gloses, comme le fait la KJV.
+      rights: 'Domaine public · kjvstudy.org',
+      availability: VersionAvailability.downloadable,
+      // Même format que l'ATI et le NTI : un mot par colonne, ses lignes
+      // empilées. Le mot hébreu part par `h` et le grec par `m`, ce qui rend
+      // la première moitié de droite à gauche et la seconde de gauche à
+      // droite, sans qu'une ligne de code ait à savoir où elle est.
+      //
+      // Le kit n'a aucune morphologie : ni `g` (étiquette) ni `a` (analyse)
+      // ne sont écrits, et la feuille d'un mot n'y montre pas de ligne
+      // « Analyse ». Rien n'est inventé pour la remplir. Sa définition
+      // Strong, elle, n'est pas reportée — `StrongLexicon` porte déjà un
+      // lexique français plus riche, et c'est lui que la feuille affiche
+      // quand on touche un numéro.
+      format: VersionFormat.ati,
+      languageCode: 'EN',
+      // Hébreu pour l'Ancien Testament, grec pour le Nouveau : une section
+      // à part, plutôt que de le ranger sous l'une des deux langues.
+      textLanguage: TextLanguage.mixed,
+      urlTemplate:
+          'http://127.0.0.1:8734/il/{book}.json',
+    ),
+    VersionEntry(
+      code: 'TR',
+      name: 'Textus Receptus — Stephanus 1550 (grec)',
+      // Texte et morphologie de Maurice A. Robinson (byztxt), domaine
+      // public. Le lexique Strong du kit est sous GPL 3.0 et n'est pas
+      // servi : l'app a le sien, et les numéros eux-mêmes viennent de la
+      // concordance Strong de 1890.
+      rights: 'Texte et morphologie : domaine public · '
+          'Maurice A. Robinson (byztxt)',
+      availability: VersionAvailability.downloadable,
+      // Nouveau Testament seul : le Textus Receptus va de Matthieu à
+      // l'Apocalypse. `ntOnly` fait compter la Bibliothèque sur 27, en miroir
+      // exact de `otOnly` sur l'ATI.
+      format: VersionFormat.ati,
+      ntOnly: true,
+      // Le grec, comme le « HE » de la WLC nomme l'hébreu. Les codes
+      // Robinson y sont lus en français (`ca`), mais le corpus n'a aucune
+      // glose : `bookFromAti` n'y joint rien, et Comparer l'écarte d'elle-
+      // même plutôt que d'afficher un verset vide.
+      languageCode: 'EL',
+      textLanguage: TextLanguage.greek,
+      // Le jeton {book} prend le numéro standard 40..66 — Matthieu est le
+      // 40 comme dans le NTI, la SES et les autres corpus de Nouveau
+      // Testament.
+      urlTemplate:
+          'http://127.0.0.1:8734/tr/{book}.json',
     ),
     VersionEntry(
       code: 'KJV',
@@ -536,6 +644,7 @@ const List<VersionGroup> versionCatalog = [
       availability: VersionAvailability.downloadable,
       getbibleId: 'kjv',
       languageCode: 'EN',
+      textLanguage: TextLanguage.english,
     ),
   ]),
 ];

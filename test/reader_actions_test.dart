@@ -288,7 +288,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Version'), findsOneWidget);
-    expect(find.text('Version intégrée'), findsOneWidget);
+    expect(find.text('Français'), findsOneWidget,
+        reason: 'the sheet heads its sections with the language of the text, '
+            'like the Bibliothèque — everything readable here is French');
     expect(find.text('Bible de Yehoshoua Ha Mashiah'), findsOneWidget);
 
     // Nothing is downloaded here, so the downloadable half of the catalogue is
@@ -300,7 +302,10 @@ void main() {
     expect(find.text('LSS'), findsOneWidget,
         reason: 'the LSS reads like any other version');
     expect(find.text('Bible Darby'), findsNothing);
-    expect(find.text('Autres versions'), findsNothing);
+    // A language nothing readable lives in takes no heading.
+    expect(find.text('Hébreu'), findsNothing);
+    expect(find.text('Grec'), findsNothing);
+    expect(find.text('Anglais'), findsNothing);
   });
 
   testWidgets('the sheet ends on the way to the Bibliothèque', (tester) async {
@@ -312,9 +317,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Bibliothèque'), findsOneWidget);
-    // 21 catalogue entries, BYM, LSGS and LSS being the only readable ones
-    // here — 18 others are left to fetch.
-    expect(find.text('18 autres versions à télécharger'), findsOneWidget);
+    // 23 catalogue entries, BYM, LSGS and LSS being the only readable ones
+    // here — 20 others are left to fetch.
+    expect(find.text('20 autres versions à télécharger'), findsOneWidget);
   });
 
   testWidgets('a listed version no longer carries an audio glyph', (

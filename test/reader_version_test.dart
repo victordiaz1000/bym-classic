@@ -203,6 +203,48 @@ void main() {
     );
   });
 
+  testWidgets('la feuille Version classe les versions lisibles par langue', (
+    tester,
+  ) async {
+    // Une WLC hébreu, une SES grecque et la KJV arrivées avec la Bibliothèque
+    // : la feuille ouvre alors une section par langue du texte, dans le même
+    // ordre que l'onglet Bibles (Français · Hébreu · Grec · Anglais). Panneau
+    // haut : les quatre intertitres doivent tenir à l'écran d'un coup.
+    tester.view.physicalSize = const Size(1200, 3000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    final store = FakeStore({
+      'DBY': {1: getbibleBook(1)},
+      'WLC': {1: getbibleBook(1)},
+      'SES': {1: getbibleBook(1)},
+      'KJV': {1: getbibleBook(1)},
+    });
+    await pumpReader(tester, store: store);
+    await openVersionSheet(tester, 'BYM');
+
+    final entetes = ['Français', 'Hébreu', 'Grec', 'Anglais'];
+    for (final titre in entetes) {
+      expect(find.text(titre), findsOneWidget,
+          reason: 'chaque langue lisible prend son intertitre');
+    }
+    final ys = [
+      for (final titre in entetes) tester.getTopLeft(find.text(titre)).dy,
+    ];
+    expect(ys, equals([...ys]..sort()),
+        reason: 'les sections suivent le même ordre que la Bibliothèque');
+
+    // Chaque section range ses versions : le Darby sous Français, la WLC
+    // sous Hébreu, la SES sous Grec, la KJV sous Anglais.
+    double yOf(String nom) => tester.getTopLeft(find.text(nom)).dy;
+    expect(yOf('Bible Darby'), allOf(greaterThan(ys[0]), lessThan(ys[1])));
+    expect(yOf('WLC — Westminster Leningrad Codex (hébreu)'),
+        allOf(greaterThan(ys[1]), lessThan(ys[2])));
+    expect(yOf('Septuaginta — grec + Strong'),
+        allOf(greaterThan(ys[2]), lessThan(ys[3])));
+    expect(yOf('King James Version (anglais)'), greaterThan(ys[3]));
+  });
+
   testWidgets('the choice is written to the preferences', (tester) async {
     await pumpReader(tester, store: darbyGenesisOnly());
     await openVersionSheet(tester, 'BYM');
@@ -268,9 +310,10 @@ void main() {
     expect(find.text('Bible Darby'), findsNothing);
     expect(find.text('Bible de Yehoshoua Ha Mashiah'), findsOneWidget,
         reason: 'the embedded version is always there');
-    // 18, pas 17 : la WLC (codex de Leningrad, hébreu + Strong, source
-    // hors Biblia Universalis) a rejoint les téléchargeables après la SES.
-    expect(find.text('18 autres versions à télécharger'), findsOneWidget);
+    // 20, pas 18 : l'interlinéaire complet (AT + NT, gloses anglaises) et
+    // le Textus Receptus de Stephanus ont rejoint les téléchargeables
+    // depuis la WLC.
+    expect(find.text('20 autres versions à télécharger'), findsOneWidget);
   });
 
   testWidgets('the footer leads to the Bibliothèque', (tester) async {

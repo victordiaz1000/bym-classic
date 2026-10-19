@@ -326,16 +326,23 @@ class _LibraryScreenState extends State<LibraryScreen> {
     // liste, sous leur propre intertitre, pour ne pas couper les versions
     // réellement intégrées ou téléchargeables.
     final locked = <VersionEntry>[];
-    final openGroups = <VersionGroup>[];
+
+    // Classement par langue du texte : chaque langue prend son intertitre,
+    // dans l'ordre de `TextLanguage.values` (Français · Hébreu · Grec ·
+    // Hébreu & grec · Anglais). L'ordre du catalogue reste celui des tuiles
+    // à l'intérieur d'une langue — la BYM ouvre le français, la WLC
+    // l'hébreu.
+    final byLanguage = <TextLanguage, List<VersionEntry>>{
+      for (final language in TextLanguage.values) language: <VersionEntry>[],
+    };
 
     for (final group in versionCatalog) {
-      final available = group.versions
-          .where((v) => v.availability != VersionAvailability.unavailable)
-          .toList();
-      locked.addAll(group.versions.where(
-          (v) => v.availability == VersionAvailability.unavailable));
-      if (available.isNotEmpty) {
-        openGroups.add(VersionGroup(group.title, available));
+      for (final version in group.versions) {
+        if (version.availability == VersionAvailability.unavailable) {
+          locked.add(version);
+        } else {
+          byLanguage[version.textLanguage]!.add(version);
+        }
       }
     }
 
@@ -355,10 +362,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
                 'sur l\'appareil · ${_formatSize(deviceBytes)}',
           ),
         ],
-        for (final group in openGroups) ...[
-          _GroupHeader(title: group.title),
-          for (final version in group.versions) _tile(version),
-        ],
+        for (final language in TextLanguage.values)
+          if (byLanguage[language]!.isNotEmpty) ...[
+            _GroupHeader(title: language.label),
+            for (final version in byLanguage[language]!) _tile(version),
+          ],
         if (locked.isNotEmpty) ...[
           _GroupHeader(title: 'Bientôt disponibles'),
           for (final version in locked) _tile(version),

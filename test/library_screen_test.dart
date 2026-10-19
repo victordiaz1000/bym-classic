@@ -630,6 +630,58 @@ void main() {
       expect(lastAvailable, lessThan(firstLocked));
     });
 
+    testWidgets('les versions sont classées par langue du texte',
+        (tester) async {
+      final store = FakeStore();
+      await pumpLibrary(tester, store: store, service: FakeService(store));
+
+      // Quatre intertitres, dans l'ordre des langues du texte — le
+      // classement demandé : français, hébreu, grec, puis l'anglais de la
+      // KJV, seule version non française. L'interlinéaire complet IL, hébreu
+      // et grec à la fois, a sa section à part.
+      final entetes = ['FRANÇAIS', 'HÉBREU', 'GREC', 'ANGLAIS'];
+      for (final titre in entetes) {
+        expect(find.text(titre), findsOneWidget,
+            reason: 'l\'intertitre « $titre » classe sa section');
+      }
+      final ys = [
+        for (final titre in entetes)
+          tester.getTopLeft(find.text(titre)).dy,
+      ];
+      expect(ys, equals([...ys]..sort()),
+          reason: 'les sections suivent l\'ordre des langues');
+
+      // Chaque langue range ses versions : le français ouvre (la BYM est la
+      // première carte), la WLC est la seule sous Hébreu, le NTI sous Grec,
+      // la KJV ferme la marche.
+      double yOf(String nom) => tester.getTopLeft(find.text(nom)).dy;
+      expect(yOf('Bible Darby'), lessThan(ys[1]),
+          reason: 'une version française vit sous FRANÇAIS');
+      final wlc = yOf('WLC — Westminster Leningrad Codex (hébreu)');
+      expect(wlc, greaterThan(ys[1]));
+      expect(wlc, lessThan(ys[2]), reason: 'la WLC range son hébreu entre '
+          'HÉBREU et GREC');
+      final nti = yOf('Nouveau Testament Interlinéaire');
+      expect(nti, greaterThan(ys[2]));
+      expect(nti, lessThan(ys[3]), reason: 'le NTI range son grec entre '
+          'GREC et ANGLAIS');
+      expect(yOf('King James Version (anglais)'), greaterThan(ys[3]));
+
+      // L'interlinéaire complet IL porte l'hébreu ET le grec : il tient sa
+      // section à part, entre GREC et ANGLAIS. Le TR, lui, range son grec
+      // sous GREC.
+      expect(find.text('HÉBREU & GREC'), findsOneWidget);
+      expect(yOf('Bible Interlinéaire complète (AT + NT)'),
+          allOf(greaterThan(ys[2]), lessThan(ys[3])));
+      expect(yOf('Textus Receptus — Stephanus 1550 (grec)'),
+          allOf(greaterThan(ys[2]), lessThan(ys[3])));
+
+      // Les anciens groupes du catalogue ne dictent plus l'ordre.
+      expect(find.text('Version intégrée'), findsNothing);
+      expect(find.text('Versions Louis Segond'), findsNothing);
+      expect(find.text('Autres versions'), findsNothing);
+    });
+
     testWidgets('downloading shows the bar, then the size and the outcome',
         (tester) async {
       final store = FakeStore();
