@@ -88,6 +88,17 @@ const List<DictionaryEntry> dictionaryCatalog = [
     url: 'https://raw.githubusercontent.com/victordiaz1000/-bym-dictionaries/main/gbm.json',
   ),
   DictionaryEntry(
+    code: 'SEF_GLOSS',
+    name: 'Glossaire Septante',
+    rights: 'Glossaire de la Septante française (Giguet) · libre',
+    description:
+        'Notices de traduction (Âme, Seigneur, Consacrer…), introductions et index du glossaire de la SEF.',
+    availability: DictionaryAvailability.downloadable,
+    // Converti depuis les pages HTML de sef/extrait/glossaire par
+    // sef/glossaire_to_json.py (glossaire_septante.json, 44 entrées).
+    url: 'https://raw.githubusercontent.com/victordiaz1000/-bym-dictionaries/main/glossaire_septante.json',
+  ),
+  DictionaryEntry(
     code: 'NAVE',
     name: 'Nave',
     rights: 'Catégorie thématique',
