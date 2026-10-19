@@ -5,11 +5,16 @@ import 'marquee_text.dart';
 import 'premium_style.dart';
 
 /// Bandeau annonçant qu'une nouvelle version **de l'application** est publiée :
-/// « Nouvelle version 1.0.1 — mettre à jour dans les Réglages ».
+/// « Mettre à jour l'app dans les réglages ».
 ///
 /// Jumeau de [BymUpdateBanner] : mêmes règles, même conduite. Il n'installe
 /// rien — l'appui mène à Réglages, seul endroit qui télécharge et vérifie — et
 /// il disparaît de lui-même quand [AppUpdateChecker.available] retombe à null.
+///
+/// **Ses deux écarts au jumeau font la différence des deux annonces** : il est
+/// rendu en bas, au-dessus de la barre d'onglets, et dans **tous** les onglets —
+/// une mise à jour de l'application concerne l'application entière, là où celle
+/// du texte ne concerne que l'onglet Lecture.
 ///
 /// **Rien à l'écran** sans version plus récente, pas même un `SizedBox` de
 /// quelques pixels : le cas ordinaire ne doit programmer aucune frame, sinon les
@@ -29,8 +34,7 @@ class AppUpdateBanner extends StatelessWidget {
       builder: (context, release, _) {
         if (release == null) return const SizedBox.shrink();
         return _Banner(
-          label: 'Nouvelle version ${release.version} — mettre à jour dans '
-              'les Réglages',
+          label: 'Mettre à jour l\'app dans les réglages',
           onTap: onOpenSettings,
         );
       },
@@ -56,7 +60,7 @@ class _Banner extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: p.primary.withValues(alpha: .28)),
+              top: BorderSide(color: p.primary.withValues(alpha: .28)),
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),

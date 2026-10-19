@@ -7,7 +7,6 @@ import '../data/reading_history.dart';
 import '../data/tab_manager.dart';
 import '../data/version_repository.dart';
 import '../models/study_tab.dart';
-import '../widgets/app_update_banner.dart';
 import '../widgets/bym_update_banner.dart';
 import '../widgets/chapter_reader.dart';
 import '../widgets/premium_style.dart';
@@ -118,10 +117,6 @@ class _ReaderScreenState extends State<ReaderScreen> {
                   // l'emporte sur lui comme sur le reste du décor.
                   if (!immersive)
                     BymUpdateBanner(onOpenSettings: widget.onOpenSettings),
-                  // Même logique pour une version plus récente de
-                  // l'application : le bandeau annonce, Réglages installe.
-                  if (!immersive)
-                    AppUpdateBanner(onOpenSettings: widget.onOpenSettings),
                   Expanded(
                     child: IndexedStack(
                       index: activeIndex,
@@ -340,7 +335,6 @@ class _NewTabHomeState extends State<_NewTabHome> {
             // aussi la page de lecture, et c'est souvent la première vue au
             // lancement — donc celle qui doit le dire.
             BymUpdateBanner(onOpenSettings: widget.onOpenSettings),
-            AppUpdateBanner(onOpenSettings: widget.onOpenSettings),
             _HomeActionsBar(
               versionCode: _versionCode,
               onSelectVersion: _selectVersion,

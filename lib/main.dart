@@ -13,6 +13,7 @@ import 'screens/reader_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
 import 'utils/breakpoints.dart';
+import 'widgets/app_update_banner.dart';
 import 'widgets/bible_theme_scope.dart';
 import 'widgets/centered_content.dart';
 import 'widgets/chapter_reader.dart';
@@ -386,8 +387,18 @@ class _HomeShellState extends State<HomeShell> {
                   ],
                 )
               : content,
-          bottomNavigationBar:
-              hasRail || immersive ? null : _buildNavigationBar(context),
+          bottomNavigationBar: immersive
+              ? null
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppUpdateBanner(
+                      onOpenSettings: () =>
+                          _selectDestination(BymDestination.reglages),
+                    ),
+                    if (!hasRail) _buildNavigationBar(context),
+                  ],
+                ),
         );
       },
     );
