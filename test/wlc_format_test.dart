@@ -8,17 +8,19 @@ import 'package:bible_app/models/ati.dart';
 /// `bym-bibles/wlc/1.json`, pas reconstituée : ce qui distingue la WLC de
 /// l'ATI ne se voit que sur du vrai.
 ///
-/// Deux faits du corpus y sont figés, et ils ne sont pas décoratifs :
+/// Trois faits du corpus y sont figés, et ils ne sont pas décoratifs :
 ///
 /// - le mot passe par `h` et non par `m`. `AtiWord.greek` se décide sur les
 ///   clés grecques, et une WLC écrite en `m` s'afficherait de gauche à
 ///   droite, à contresens du texte ;
 /// - le pointage est celui du codex. L'ATI repointe `d` selon la forme
 ///   canonique (`h`=יָשָׁב mais `d`=יַשֵּׁב) : ce travail éditorial n'est pas
-///   dérivable de la WLC, et le pointage source est conservé tel quel.
+///   dérivable de la WLC, et le pointage source est conservé tel quel ;
+/// - la translittération `t` est **générée** à partir des points du codex.
+///   L'ATI ne fournit qu'une comparaison : rien de son `t` n'est lu ici.
 ///
 /// Les tables `cg` / `ca` sont tronquées aux seules entrées que ce verset
-/// utilise ; le livre complet en porte 8 et 999.
+/// utilise ; le livre complet en porte 8 et 998.
 const Map<String, dynamic> genese1 = {
   'bym_index': 1,
   'standard': 1,
@@ -27,7 +29,19 @@ const Map<String, dynamic> genese1 = {
   // `Gen`, et c'est aussi le nom de fichier d'openscriptures/morphhb.
   'osis_id': 'Gen',
   'cg': ['Nom', 'Verbe', 'Particule'],
-  'ca': ['R/Ncfsa', 'Vqp3ms', 'Ncmpa', 'To', 'Td/Ncmpa', 'C/To', 'Td/Ncbsa'],
+  // `ca` porte la lecture en français du code OSHB, pas le code lui-même :
+  // c'est ce que la feuille affiche sous « Analyse ». Les sept entrées de ce
+  // verset sont écrites telles que `wlc_to_json.py` les produit.
+  'ca': [
+    'Nom commun· féminin singulier· état absolu— Préposition',
+    'Verbe qal parfait (qatal)· 3ᵉ masculin singulier',
+    'Nom commun· masculin pluriel· état absolu',
+    'Particule marqueur d’objet direct',
+    'Nom commun· masculin pluriel· état absolu— Particule article défini',
+    'Particule marqueur d’objet direct— Conjonction',
+    'Nom commun· féminin et masculin singulier· état absolu— '
+    'Particule article défini',
+  ],
   'chapters': [
     {
       'chapter': 1,
@@ -36,17 +50,53 @@ const Map<String, dynamic> genese1 = {
           'verse': 1,
           'words': [
             // Le `/` du source est retiré de `h` et devient le `•` de `d`.
-            {'h': 'בְּרֵאשִׁ֖ית', 'd': 'בְּ • רֵאשִׁ֖ית', 's': 'H7225', 'g': 0, 'a': 0},
+            {
+              'h': 'בְּרֵאשִׁ֖ית',
+              'd': 'בְּ • רֵאשִׁ֖ית',
+              's': 'H7225',
+              'g': 0,
+              'a': 0,
+              't': 'bə·rê·šîṯ',
+            },
             // Sans morphème scindé, pas de `d` : le mot n'a rien à apprendre
             // au-delà de `h`.
-            {'h': 'בָּרָ֣א', 's': 'H1254', 'g': 1, 'a': 1},
-            {'h': 'אֱלֹהִ֑ים', 's': 'H430', 'g': 0, 'a': 2},
+            {'h': 'בָּרָ֣א', 's': 'H1254', 'g': 1, 'a': 1, 't': 'bā·rā'},
+            // L'accent devient la ponctuation de fin de mot : etnahta → `;`.
+            {
+              'h': 'אֱלֹהִ֑ים',
+              's': 'H430',
+              'g': 0,
+              'a': 2,
+              't': '’ĕ·lō·hîm;',
+            },
             // Marqueur d'objet direct, sans Strong propre dans la source.
-            {'h': 'אֵ֥ת', 's': 'H853', 'g': 2, 'a': 3},
-            {'h': 'הַשָּׁמַ֖יִם', 'd': 'הַ • שָּׁמַ֖יִם', 's': 'H8064', 'g': 0, 'a': 4},
-            {'h': 'וְאֵ֥ת', 'd': 'וְ • אֵ֥ת', 's': 'H853', 'g': 2, 'a': 5},
-            // Le sof pasuq est du texte : il va dans `h`, jamais dans `d`.
-            {'h': 'הָאָֽרֶץ׃', 'd': 'הָ • אָֽרֶץ', 's': 'H776', 'g': 0, 'a': 6},
+            {'h': 'אֵ֥ת', 's': 'H853', 'g': 2, 'a': 3, 't': '’êṯ'},
+            {
+              'h': 'הַשָּׁמַ֖יִם',
+              'd': 'הַ • שָּׁמַ֖יִם',
+              's': 'H8064',
+              'g': 0,
+              'a': 4,
+              't': 'haš·šā·ma·yim',
+            },
+            {
+              'h': 'וְאֵ֥ת',
+              'd': 'וְ • אֵ֥ת',
+              's': 'H853',
+              'g': 2,
+              'a': 5,
+              't': 'wə·’êṯ',
+            },
+            // Le sof pasuq est du texte : il va dans `h`, jamais dans `d` —
+            // et il se translittère en `.`.
+            {
+              'h': 'הָאָֽרֶץ׃',
+              'd': 'הָ • אָֽרֶץ',
+              's': 'H776',
+              'g': 0,
+              'a': 6,
+              't': 'hā·’ā·reṣ.',
+            },
           ],
         },
       ],
@@ -82,9 +132,56 @@ void main() {
 
       expect(mot.split, 'בְּ • רֵאשִׁ֖ית');
       expect(mot.grammar, 'Nom');
-      expect(mot.analysis, 'R/Ncfsa');
-      expect(mot.translit, isNull, reason: laSourceNAPasDeTranslitteration);
+      expect(mot.analysis, 'Nom commun· féminin singulier· état absolu— '
+          'Préposition');
       expect(mot.gloss, isNull, reason: laSourceNAPasDeGlose);
+    });
+
+    test('l’analyse se lit en français, le code OSHB seul n’explique rien', () {
+      // `R/Ncfsa` ne dit rien à qui ne connaît pas la table OSHB. La
+      // feuille affiche `analysis`, qui est donc rendu lisible — et le
+      // morphème de tête s'écrit d'abord, le préfixe ensuite, comme la
+      // lecture se fait.
+      final livre = bookFromAti(genese1, bymIndex: 1);
+      final mots = livre.chapters.first.verses.first.mots!;
+
+      expect(mots[0].analysis, contains('Préposition'),
+          reason: 'la préposition est la tête, elle ferme la lecture');
+      expect(mots[0].analysis, endsWith('Préposition'));
+      expect(mots[3].analysis, 'Particule marqueur d’objet direct');
+      expect(mots[4].analysis,
+          'Nom commun· masculin pluriel· état absolu— Particule article '
+          'défini');
+      for (final mot in mots) {
+        expect(mot.analysis, isNotNull);
+        expect(mot.analysis, isNotEmpty);
+        expect(mot.analysis!.contains('/'), isFalse,
+            reason: 'un code comme `Td/Ncmpa` n’aurait aucun sens pour le '
+                'lecteur ; la table est appliquée, pas affichée');
+      }
+    });
+
+    test('la translittération est lue dans `t`, syllabes et ponctuation', () {
+      // Le champ existe et l'app le lit : c'est `AtiWord.translit`, la même
+      // clé que l'ATI. Le contenu, lui, vient des points du codex.
+      final livre = bookFromAti(genese1, bymIndex: 1);
+      final mots = livre.chapters.first.verses.first.mots!;
+
+      expect(mots[0].translit, 'bə·rê·šîṯ');
+      expect(mots[2].translit, '’ĕ·lō·hîm;',
+          reason: 'etnahta devient `;`, et le mot garde ses syllabes');
+      expect(mots[6].translit, 'hā·’ā·reṣ.',
+          reason: 'le sof pasuq devient `.`');
+    });
+
+    test('chaque mot du verset porte une translittération, jamais vide', () {
+      final livre = bookFromAti(genese1, bymIndex: 1);
+      final mots = livre.chapters.first.verses.first.mots!;
+
+      for (final mot in mots) {
+        expect(mot.translit, isNotNull);
+        expect(mot.translit, isNotEmpty);
+      }
     });
 
     test('un mot sans morphème scindé n\'a pas de découpage', () {
@@ -110,6 +207,37 @@ void main() {
       expect(etiquetteCourte('HR/Ncfsa'), 'Nom');
       expect(etiquetteCourte('HC/Vqw3ms'), 'Verbe');
       expect(etiquetteCourte('HTo'), 'Particule');
+    });
+
+    test('P est un pronom et R une préposition, dans le sens de la table OSHM', () {
+      // Table officielle hb.openscriptures.org : P = pronoun,
+      // R = preposition. La première version de la table les avait
+      // inversés — 31 679 mots en portaient l'étiquette fausse.
+      expect(etiquetteCourte('HP'), 'Pronom');
+      expect(etiquetteCourte('HR'), 'Préposition');
+      expect(etiquetteCourte('HP3ms'), 'Pronom');
+      expect(etiquetteCourte('HP/Sp3ms'), 'Pronom',
+          reason: 'le suffixe ne prend pas la tête, et le P reste seul');
+    });
+
+    test('le code de langue araméen n\'est pas une partie de speech', () {
+      // « One language code is prefixed to the entire parsing string » :
+      // H hébreu, A araméen. Sans retrait, le A de l'araméen est lu comme
+      // un Adjectif — 2 749 étiquettes en portaient la faute.
+      expect(etiquetteCourte('ANcmsa'), 'Nom');
+      expect(etiquetteCourte('AVq3ms'), 'Verbe');
+      expect(etiquetteCourte('AAcmsa'), 'Adjectif',
+          reason: 'un vrai adjectif araméen porte AA, pas A');
+    });
+
+    test('l\'article araméen postposé ne prend pas la tête du mot', () {
+      // `ANcmsd/Td` : nom suivi de son article. Le dernier morphème
+      // porteur serait la particule, alors que la tête reste le nom —
+      // 816 mots disaient Particule au lieu de Nom.
+      expect(etiquetteCourte('ANcmsd/Td'), 'Nom');
+      expect(etiquetteCourte('AC/Ncmsd/Td'), 'Nom');
+      // Un `Td` seul, en tête, garde au contraire la tête qu'il porte.
+      expect(etiquetteCourte('HTd/Ncmpa'), 'Nom');
     });
 
     test('un index hors table donne null, pas une exception', () {
@@ -171,33 +299,39 @@ void main() {
   });
 }
 
-const laSourceNAPasDeTranslitteration =
-    'OSHB ne fournit pas de translittération, et rien ne doit en tenir lieu';
-
 const laSourceNAPasDeGlose =
     'La WLC est le texte hébreu : aucun français ne doit y être ajouté';
 
 /// L'étiquette que `cg` porte pour un code morphologique OSHB.
 ///
 /// Reproduit la règle de `WLC/wlc_to_json.py` pour la poser à côté des
-/// valeurs qu'elle produit : la tête du mot est le dernier morphème qui
-/// porte une partie de speech, un suffixe n'en portant pas.
+/// valeurs qu'elle produit : le code de langue est retiré, la tête du mot
+/// est le dernier morphème qui porte une partie de speech — un suffixe n'en
+/// portant pas — et l'article araméen postposé ne prend pas cette tête.
 String etiquetteCourte(String morph) {
   const pos = {
     'A': 'Adjectif',
     'C': 'Conjonction',
     'D': 'Adverbe',
     'N': 'Nom',
-    'P': 'Préposition',
-    'R': 'Pronom',
+    'P': 'Pronom',
+    'R': 'Préposition',
     'T': 'Particule',
     'V': 'Verbe',
   };
-  final sansH = morph.startsWith('H') ? morph.substring(1) : morph;
-  final morceaux = sansH.split('/').where((m) => m.isNotEmpty).toList();
+  var sans = morph;
+  if (morph.length > 1 && 'HA'.contains(morph[0]) && pos.containsKey(morph[1])) {
+    sans = morph.substring(1);
+  }
+  final morceaux = sans.split('/').where((m) => m.isNotEmpty).toList();
   final porteurs = morceaux.where((m) => pos.containsKey(m[0])).toList();
-  final tete = porteurs.isNotEmpty
-      ? porteurs.last
-      : (morceaux.isNotEmpty ? morceaux.last : sansH);
-  return pos[tete[0]] ?? sansH;
+  if (porteurs.isEmpty) {
+    return morceaux.isNotEmpty ? morceaux.last : sans;
+  }
+  var tete = porteurs.last;
+  // Article araméen postposé : la tête est le nom qui le porte.
+  if (porteurs.length > 1 && tete.startsWith('Td')) {
+    tete = porteurs[porteurs.length - 2];
+  }
+  return pos[tete[0]] ?? sans;
 }
