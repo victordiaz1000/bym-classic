@@ -210,12 +210,6 @@ class AppUpdateChecker {
   /// À appeler après une installation ou quand le lecteur choisit d'ignorer.
   static void clear() => available.value = null;
 
-  /// Date de la dernière vérification **réussie**, pour l'afficher dans
-  /// Réglages. « À jour » déconnecté du moment où on l'a vérifié ne veut rien
-  /// dire : le lecteur doit pouvoir dater l'information qu'on lui donne.
-  static Future<DateTime?> lastCheck() =>
-      debugLastCheck?.call() ?? _readLastCheck();
-
   static Future<DateTime?> _readLastCheck() async {
     try {
       final prefs = await _prefs;

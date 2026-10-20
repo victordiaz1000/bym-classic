@@ -14,7 +14,6 @@ import '../data/share_text.dart';
 import '../data/theme_catalog.dart';
 import '../data/version_catalog.dart';
 import '../data/version_repository.dart';
-import '../utils/date_format.dart';
 import '../widgets/fiche_text_settings.dart';
 import '../widgets/loading_skeleton.dart';
 import '../widgets/premium_style.dart';
@@ -22,12 +21,12 @@ import '../widgets/reading_preview.dart';
 import 'themes_screen.dart';
 
 /// Version de l'**application** telle que `pubspec.yaml` la déclare
-/// (`version: 1.0.2+3`), valeur de repli quand `package_info_plus` ne répond
+/// (`version: 1.0.1+2`), valeur de repli quand `package_info_plus` ne répond
 /// pas — la version affichée vient normalement du manifeste installé. À
 /// remonter à chaque bump de version : c'est la seule valeur écrite à la main.
 /// La version du **texte**, elle, se lit à l'exécution et n'a pas besoin d'être
 /// écrite ici.
-const String appVersion = '1.0.2';
+const String appVersion = '1.0.1';
 
 /// Réglages — destination de la coquille.
 ///
@@ -120,16 +119,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   AppUpdateProgress? _appProgress;
   String? _appMessage;
 
-  /// Moment de la dernière vérification **réussie** du dépôt, lu dans les
-  /// préférences. Null tant qu'aucune vérification n'a abouti.
-  DateTime? _appLastCheck;
-
   @override
   void initState() {
     super.initState();
     _load();
     _loadAppVersion();
-    _loadAppLastCheck();
     // The settings screen survives in the shell's IndexedStack: without this it
     // keeps the registry as it stood when it was built, so a version downloaded
     // in the Bibliothèque would not show up in the storage list.
@@ -721,27 +715,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  /// Relit l'horodatage de la dernière vérification **réussie**. Détachée
-  /// d'[initState] comme [_loadAppVersion] : la valeur vient des préférences,
-  /// et l'écran doit s'afficher même si cette lecture échoue.
-  Future<void> _loadAppLastCheck() async {
-    final when = await AppUpdateChecker.lastCheck();
-    if (!mounted) return;
-    setState(() => _appLastCheck = when);
-  }
-
-  /// Sous-titre de la rangée de vérification, quand aucun message d'état ne
-  /// prime. « À jour » déconnecté du moment où on l'a vérifié ne veut rien
-  /// dire : la date répond à la question que la seule phrase laisserait ouverte.
-  String get _appCheckSubtitle => _appLastCheck == null
-      ? 'La dernière publiée est installée.'
-      : 'Dernière vérification : ${formatRelativeDate(_appLastCheck!)}.';
-
   /// La section « MISE À JOUR DE L'APPLICATION ».
   ///
-  /// Elle suit le même notificateur que le bandeau du bas
-  /// ([AppUpdateChecker.available]) : les deux ne peuvent pas se contredire.
-  /// Chaque canal publié a sa rangée — GitHub aujourd'hui, les
+  /// Elle suit le même notificateur que le bandeau du lecteur et la pastille de
+  /// la Bibliothèque ([AppUpdateChecker.available]) : les trois ne peuvent pas
+  /// se contredire. Chaque canal publié a sa rangée — GitHub aujourd'hui, les
   /// stores quand leurs identifiants existeront — et c'est la rangée, jamais le
   /// bandeau, qui télécharge.
   Widget _appUpdateSection() {
@@ -760,7 +738,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _SettingsRow(
                 icon: Icons.verified_outlined,
                 title: 'Vérifier une nouvelle version',
-                subtitle: _appMessage ?? _appCheckSubtitle,
+                subtitle: _appMessage ?? 'La dernière publiée est installée.',
                 trailing: const Icon(Icons.refresh),
                 onTap: _appBusy ? null : _checkAppUpdate,
               )
@@ -882,14 +860,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await AppUpdateChecker.maybeCheck(force: true);
       if (!mounted) return;
       final release = AppUpdateChecker.available.value;
-      await _loadAppLastCheck();
-      if (!mounted) return;
-      // Le retour de la rangée, c'est l'horodatage qui passe à « à l'instant » :
-      // une phrase « à jour » à côté de « dernière vérification : à l'instant »
-      // se contredirait dès qu'elle aurait vieilli d'une heure.
       setState(() {
         _appMessage = release == null
-            ? null
+            ? 'L’application est à jour.'
             : 'Version ${release.version} disponible.';
       });
     } catch (_) {
